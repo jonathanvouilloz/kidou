@@ -5,7 +5,7 @@
 | Phase | Feature | Statut | Complexité |
 |-------|---------|--------|------------|
 | 1 | Setup projet | ✅ DONE | S |
-| 2 | Design System & Styleguide | ⬜ TODO | M |
+| 2 | Design System & Styleguide | ✅ DONE | M |
 | 3 | Auth | ⬜ TODO | M |
 | 4 | Core Features | ⬜ TODO | L |
 | 5 | Pages publiques | ⬜ TODO | M |

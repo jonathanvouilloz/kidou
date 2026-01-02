@@ -51,14 +51,14 @@ npm run db:studio      # Drizzle Studio (UI)
 
 ## État actuel
 
-**Phase** : 1 - Setup projet (TERMINÉE)
+**Phase** : 2 - Design System & Styleguide (TERMINÉE)
 **Complété** :
-- Structure documentation (CLAUDE.md, docs/)
-- SvelteKit + TypeScript initialisé
-- Dépendances installées (drizzle, better-auth, anthropic-ai)
-- Variables CSS et styles globaux
-- Schéma DB Drizzle (users, projects, milestones)
-- Configuration Better-Auth
-- Landing page placeholder
+- Phase 1 : Setup projet
+- Font JetBrains Mono
+- 9 composants UI (Button, Input, Checkbox, Card, Badge, Loader, Avatar, Modal, Toast)
+- 4 composants Terminal (Terminal, TerminalLine, TerminalProgress, TerminalDone)
+- 4 composants Project (ProjectCard, MilestoneItem, MilestoneList, ProjectHeader)
+- 2 composants Layout (Header, Footer)
+- Page /styleguide
 
-**Prochaine étape** : Phase 2 - Design System & Styleguide
+**Prochaine étape** : Phase 3 - Auth
