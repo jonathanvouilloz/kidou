@@ -1,0 +1,97 @@
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('/fonts/JetBrainsMono-Regular.woff2') format('woff2');
+	font-weight: 400;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('/fonts/JetBrainsMono-Medium.woff2') format('woff2');
+	font-weight: 500;
+	font-style: normal;
+	font-display: swap;
+}
+
+@font-face {
+	font-family: 'JetBrains Mono';
+	src: url('/fonts/JetBrainsMono-Bold.woff2') format('woff2');
+	font-weight: 700;
+	font-style: normal;
+	font-display: swap;
+}
+
+body {
+	font-family: var(--font-mono);
+	font-size: var(--text-base);
+	color: var(--color-text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	font-weight: 500;
+	line-height: var(--leading-tight);
+}
+
+h1 {
+	font-size: var(--text-3xl);
+}
+
+h2 {
+	font-size: var(--text-2xl);
+}
+
+h3 {
+	font-size: var(--text-xl);
+}
+
+h4 {
+	font-size: var(--text-lg);
+}
+
+code,
+pre,
+kbd {
+	font-family: var(--font-mono);
+}
+
+.text-xs {
+	font-size: var(--text-xs);
+}
+
+.text-sm {
+	font-size: var(--text-sm);
+}
+
+.text-base {
+	font-size: var(--text-base);
+}
+
+.text-lg {
+	font-size: var(--text-lg);
+}
+
+.text-xl {
+	font-size: var(--text-xl);
+}
+
+.text-2xl {
+	font-size: var(--text-2xl);
+}
+
+.text-3xl {
+	font-size: var(--text-3xl);
+}
+
+.text-muted {
+	color: var(--color-text-muted);
+}
+
+.text-secondary {
+	color: var(--color-text-secondary);
+}
