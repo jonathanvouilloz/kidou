@@ -6,9 +6,9 @@
 |-------|---------|--------|------------|
 | 1 | Setup projet | ✅ DONE | S |
 | 2 | Design System & Styleguide | ✅ DONE | M |
-| 3 | Auth | ⬜ TODO | M |
-| 4 | Core Features | ⬜ TODO | L |
-| 5 | Pages publiques | ⬜ TODO | M |
+| 3 | Auth | ✅ DONE | M |
+| 4 | Core Features | ✅ DONE | L |
+| 5 | Pages publiques | ✅ DONE | M |
 | 6 | Polish & Deploy | ⬜ TODO | S |
 
 ---
@@ -30,36 +30,36 @@
 ### Phase 2 : Design System & Styleguide
 **Fichier détail** : [02-design-system.md](./features/02-design-system.md)
 
-- [ ] Composants UI de base
-- [ ] Composants Terminal
-- [ ] Composants Project
-- [ ] Composants Layout
-- [ ] Page /styleguide
+- [x] Composants UI de base
+- [x] Composants Terminal
+- [x] Composants Project
+- [x] Composants Layout
+- [x] Page /styleguide
 
 ### Phase 3 : Auth
 **Fichier détail** : [03-auth.md](./features/03-auth.md)
 
-- [ ] Page login
-- [ ] Page register
-- [ ] Protection des routes
-- [ ] Store user
+- [x] Page login
+- [x] Page register
+- [x] Protection des routes
+- [x] Store user
 
 ### Phase 4 : Core Features
 **Fichier détail** : [04-core-features.md](./features/04-core-features.md)
 
-- [ ] Landing page
-- [ ] Dashboard privé
-- [ ] Création projet
-- [ ] API parse-prd
-- [ ] Édition milestones
-- [ ] Update progression
+- [x] Landing page
+- [x] Dashboard privé
+- [x] Création projet
+- [x] API parse-prd
+- [x] Édition milestones
+- [x] Page projet avec update progression
 
 ### Phase 5 : Pages publiques
 **Fichier détail** : [05-public-pages.md](./features/05-public-pages.md)
 
-- [ ] Page profil public
-- [ ] Page projet public
-- [ ] SEO/OG
+- [x] Page profil public
+- [x] Page projet public
+- [x] SEO/OG
 
 ### Phase 6 : Polish & Deploy
 **Fichier détail** : [06-polish.md](./features/06-polish.md)
@@ -74,6 +74,4 @@
 
 ## Prochaines étapes
 
-1. Finir setup projet (Phase 1)
-2. Créer composants UI de base
-3. Implémenter auth
+1. Polish & Deploy (Phase 6)

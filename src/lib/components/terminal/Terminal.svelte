@@ -32,7 +32,7 @@
 
 	{#if showProgress}
 		<div class="terminal-footer">
-			<span class="progress-bar">
+			<span class="progress-bar" class:complete={progress >= 100}>
 				<span class="progress-fill" style="width: {progress}%"></span>
 			</span>
 			{#if progressText}
@@ -113,8 +113,36 @@
 		transition: width var(--transition-normal);
 	}
 
+	.progress-bar.complete .progress-fill {
+		animation: pulse 2s ease-in-out infinite;
+		box-shadow: 0 0 8px var(--color-accent);
+	}
+
+	@keyframes pulse {
+		0%, 100% { opacity: 1; }
+		50% { opacity: 0.7; }
+	}
+
 	.progress-text {
 		color: var(--color-text-muted);
 		font-size: var(--text-sm);
+	}
+
+	/* Mobile responsive */
+	@media (max-width: 480px) {
+		.terminal-body {
+			padding: var(--space-3);
+			font-size: var(--text-xs);
+			min-height: 120px;
+		}
+
+		.terminal-header,
+		.terminal-footer {
+			padding: var(--space-2);
+		}
+
+		.terminal-title {
+			font-size: var(--text-xs);
+		}
 	}
 </style>

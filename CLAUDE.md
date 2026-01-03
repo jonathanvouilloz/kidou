@@ -51,14 +51,21 @@ npm run db:studio      # Drizzle Studio (UI)
 
 ## État actuel
 
-**Phase** : 2 - Design System & Styleguide (TERMINÉE)
+**Phase** : 6 - Polish & Deploy (TODO)
 **Complété** :
 - Phase 1 : Setup projet
-- Font JetBrains Mono
-- 9 composants UI (Button, Input, Checkbox, Card, Badge, Loader, Avatar, Modal, Toast)
-- 4 composants Terminal (Terminal, TerminalLine, TerminalProgress, TerminalDone)
-- 4 composants Project (ProjectCard, MilestoneItem, MilestoneList, ProjectHeader)
-- 2 composants Layout (Header, Footer)
-- Page /styleguide
+- Phase 2 : Design System (19 composants + /styleguide)
+- Phase 3 : Auth (login, register, protection routes, store user)
+- Phase 4 : Core Features
+  - Dashboard /dashboard avec liste projets
+  - Création projet /project/new (2 étapes)
+  - API /api/parse-prd (extraction milestones via Claude)
+  - API /api/projects (création projet + milestones)
+  - API /api/milestones/[id] (toggle milestone)
+  - Page projet /project/[id] avec toggle milestones
+- Phase 5 : Pages publiques
+  - Profil public /[user]
+  - Page projet public /[user]/[project]
+  - SEO & Open Graph tags
 
-**Prochaine étape** : Phase 3 - Auth
+**Prochaine étape** : Polish & Deploy

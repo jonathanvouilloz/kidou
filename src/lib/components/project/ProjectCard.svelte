@@ -9,11 +9,21 @@
 		completedCount: number;
 		totalCount: number;
 		isCompleted?: boolean;
+		href?: string;
 	}
 
-	let { name, slug, username, progress, completedCount, totalCount, isCompleted = false }: Props = $props();
+	let {
+		name,
+		slug,
+		username,
+		progress,
+		completedCount,
+		totalCount,
+		isCompleted = false,
+		href: customHref
+	}: Props = $props();
 
-	const href = `/${username}/${slug}`;
+	const href = $derived(customHref ?? `/${username}/${slug}`);
 </script>
 
 <a {href} class="project-card">

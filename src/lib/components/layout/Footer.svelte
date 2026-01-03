@@ -9,7 +9,6 @@
 		</div>
 
 		<nav class="footer-links">
-			<a href="/about" class="footer-link">À propos</a>
 			<a href="https://github.com/jonathanvouilloz/kidou" class="footer-link" target="_blank" rel="noopener">
 				GitHub
 			</a>

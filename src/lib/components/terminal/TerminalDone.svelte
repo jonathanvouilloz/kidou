@@ -45,4 +45,17 @@
 			transform: translateY(0);
 		}
 	}
+
+	/* Mobile responsive */
+	@media (max-width: 480px) {
+		.done-ascii {
+			font-size: 0.5rem;
+		}
+	}
+
+	@media (max-width: 360px) {
+		.done-ascii {
+			font-size: 0.4rem;
+		}
+	}
 </style>

@@ -8,38 +8,38 @@ Fonctionnalités principales de l'application : dashboard, création de projets,
 
 ### Landing page (`/`)
 
-- [ ] Hero section avec pitch
-- [ ] Démo visuelle du terminal
-- [ ] CTA inscription
-- [ ] Footer
+- [x] Hero section avec pitch
+- [x] Démo visuelle du terminal
+- [x] CTA inscription
+- [x] Footer
 
 ### Dashboard (`/dashboard`)
 
-- [ ] Liste des projets de l'utilisateur
-- [ ] Affichage progression par projet (barre + pourcentage)
-- [ ] Bouton "Nouveau projet"
-- [ ] Limite 3 projets (afficher compteur)
-- [ ] Message si aucun projet
+- [x] Liste des projets de l'utilisateur
+- [x] Affichage progression par projet (barre + pourcentage)
+- [x] Bouton "Nouveau projet"
+- [x] Limite 3 projets (afficher compteur)
+- [x] Message si aucun projet
 
 ### Création projet (`/project/new`)
 
-- [ ] Formulaire : nom du projet
-- [ ] Zone de texte pour coller le PRD
-- [ ] OU upload fichier .md/.txt
-- [ ] Bouton "Analyser" → appel API
-- [ ] État loading avec animation
-- [ ] Affichage résultat : liste milestones éditables
-- [ ] Actions : éditer, supprimer, réordonner (drag & drop), ajouter
-- [ ] Bouton "Créer le projet"
-- [ ] Redirection vers page projet
+- [x] Formulaire : nom du projet
+- [x] Zone de texte pour coller le PRD
+- [ ] OU upload fichier .md/.txt (reporté post-MVP)
+- [x] Bouton "Analyser" → appel API
+- [x] État loading avec animation
+- [x] Affichage résultat : liste milestones éditables
+- [x] Actions : éditer, supprimer, réordonner (up/down), ajouter
+- [x] Bouton "Créer le projet"
+- [x] Redirection vers page projet
 
 ### API parse-prd (`/api/parse-prd`)
 
-- [ ] Endpoint POST
-- [ ] Validation input
-- [ ] Appel Claude API avec prompt défini dans PRD
-- [ ] Parsing réponse JSON
-- [ ] Gestion erreurs
+- [x] Endpoint POST
+- [x] Validation input
+- [x] Appel Claude API avec prompt défini dans PRD
+- [x] Parsing réponse JSON
+- [x] Gestion erreurs
 - [ ] Rate limiting (optionnel MVP)
 
 ### Page projet (`/project/[id]`)
@@ -51,13 +51,13 @@ Fonctionnalités principales de l'application : dashboard, création de projets,
 - [ ] Affichage "DONE" à 100%
 - [ ] Actions : éditer projet, supprimer projet
 
-### Édition milestones
+### Édition milestones (dans /project/new)
 
-- [ ] Édition inline du titre
-- [ ] Réordonner par drag & drop
-- [ ] Ajouter nouveau milestone
-- [ ] Supprimer milestone
-- [ ] Auto-save toutes les modifications
+- [x] Édition inline du titre
+- [x] Réordonner par up/down
+- [x] Ajouter nouveau milestone
+- [x] Supprimer milestone
+- [ ] Auto-save toutes les modifications (pour /project/[id])
 
 ## API Endpoints
 

@@ -1,10 +1,26 @@
 <script lang="ts">
-	// Landing page - to be implemented
+	import { goto } from '$app/navigation';
+	import TerminalProgress from '$lib/components/terminal/TerminalProgress.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
+	import Footer from '$lib/components/layout/Footer.svelte';
+
+	let { data } = $props();
+
+	const demoMilestones = [
+		{ id: '1', title: 'Setup projet', isCompleted: true },
+		{ id: '2', title: 'Design system', isCompleted: true },
+		{ id: '3', title: 'Auth system', isCompleted: false },
+		{ id: '4', title: 'Core features', isCompleted: false },
+		{ id: '5', title: 'Deploy', isCompleted: false }
+	];
 </script>
 
 <svelte:head>
 	<title>Kidou - Track your progress, build in public</title>
-	<meta name="description" content="Visual progress dashboard for solopreneur developers. Build in public, simplified." />
+	<meta
+		name="description"
+		content="Visual progress dashboard for solopreneur developers. Build in public, simplified."
+	/>
 </svelte:head>
 
 <main class="landing">
@@ -15,61 +31,45 @@
 		</header>
 
 		<section class="terminal-demo">
-			<div class="terminal">
-				<div class="terminal-header">
-					<span class="terminal-dot red"></span>
-					<span class="terminal-dot yellow"></span>
-					<span class="terminal-dot green"></span>
-					<span class="terminal-title">kidou — 40%</span>
-				</div>
-				<div class="terminal-body">
-					<div class="terminal-line completed">
-						<span class="line-number">01</span>
-						<span class="line-status">✓</span>
-						<span class="line-text">Setup project</span>
-					</div>
-					<div class="terminal-line completed">
-						<span class="line-number">02</span>
-						<span class="line-status">✓</span>
-						<span class="line-text">Design system</span>
-					</div>
-					<div class="terminal-line">
-						<span class="line-number">03</span>
-						<span class="line-status">○</span>
-						<span class="line-text">Auth system</span>
-					</div>
-					<div class="terminal-line">
-						<span class="line-number">04</span>
-						<span class="line-status">○</span>
-						<span class="line-text">Core features</span>
-					</div>
-					<div class="terminal-line">
-						<span class="line-number">05</span>
-						<span class="line-status">○</span>
-						<span class="line-text">Deploy</span>
-					</div>
-					<div class="terminal-cursor">
-						<span class="cursor-blink">█</span>
-					</div>
-				</div>
-				<div class="terminal-footer">
-					<span class="progress-bar">
-						<span class="progress-fill" style="width: 40%"></span>
-					</span>
-					<span class="progress-text">2/5</span>
-				</div>
-			</div>
+			<TerminalProgress milestones={demoMilestones} title="my-saas" />
 		</section>
 
 		<section class="cta">
-			<p>Coming soon</p>
+			{#if data.user}
+				<Button onclick={() => goto('/dashboard')}>Aller au dashboard</Button>
+			{:else}
+				<Button onclick={() => goto('/auth/register')}>Commencer gratuitement</Button>
+				<p class="cta-secondary">
+					Deja un compte ? <a href="/auth/login">Se connecter</a>
+				</p>
+			{/if}
+		</section>
+
+		<section class="features">
+			<div class="feature">
+				<span class="feature-icon">01</span>
+				<h3>Upload ton PRD</h3>
+				<p>Colle ton document, l'IA extrait tes milestones</p>
+			</div>
+			<div class="feature">
+				<span class="feature-icon">02</span>
+				<h3>Track ta progression</h3>
+				<p>Coche tes milestones, visualise ton avancement</p>
+			</div>
+			<div class="feature">
+				<span class="feature-icon">03</span>
+				<h3>Build in public</h3>
+				<p>Partage ta page publique style terminal</p>
+			</div>
 		</section>
 	</div>
 </main>
 
+<Footer />
+
 <style>
 	.landing {
-		min-height: 100vh;
+		min-height: calc(100vh - 60px);
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -83,7 +83,7 @@
 
 	.hero {
 		text-align: center;
-		margin-bottom: var(--space-12);
+		margin-bottom: var(--space-8);
 	}
 
 	.logo {
@@ -103,17 +103,66 @@
 	}
 
 	.terminal-demo {
-		margin-bottom: var(--space-12);
+		margin-bottom: var(--space-8);
 	}
 
 	.cta {
 		text-align: center;
+		margin-bottom: var(--space-12);
+	}
+
+	.cta-secondary {
+		margin-top: var(--space-3);
 		color: var(--color-text-muted);
+		font-size: var(--text-sm);
+	}
+
+	.cta-secondary a {
+		color: var(--color-text);
+		text-decoration: underline;
+	}
+
+	.features {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--space-4);
+		margin-top: var(--space-8);
+	}
+
+	.feature {
+		text-align: center;
+		padding: var(--space-4);
+	}
+
+	.feature-icon {
+		display: inline-block;
+		font-size: var(--text-xs);
+		color: var(--color-success);
+		margin-bottom: var(--space-2);
+	}
+
+	.feature h3 {
+		font-size: var(--text-sm);
+		font-weight: 500;
+		margin-bottom: var(--space-1);
+	}
+
+	.feature p {
+		font-size: var(--text-xs);
+		color: var(--color-text-muted);
+		line-height: 1.4;
 	}
 
 	@keyframes blink {
 		50% {
 			opacity: 0;
+		}
+	}
+
+	@media (max-width: 600px) {
+		.features {
+			grid-template-columns: 1fr;
+			gap: var(--space-6);
 		}
 	}
 </style>

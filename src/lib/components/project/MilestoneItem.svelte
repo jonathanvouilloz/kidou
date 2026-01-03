@@ -61,6 +61,15 @@
 		width: 1.5em;
 		text-align: center;
 		font-size: var(--text-lg);
+		transition: transform 0.2s ease, color 0.2s ease;
+	}
+
+	.milestone-item.completed .milestone-status {
+		transform: scale(1.15);
+	}
+
+	.milestone-item:not(.readonly):active .milestone-status {
+		transform: scale(0.9);
 	}
 
 	.milestone-title {
