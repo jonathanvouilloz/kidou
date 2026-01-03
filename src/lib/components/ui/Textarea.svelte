@@ -4,9 +4,10 @@
 	interface Props extends HTMLTextareaAttributes {
 		error?: string;
 		label?: string;
+		value?: string;
 	}
 
-	let { error, label, id, rows = 10, ...rest }: Props = $props();
+	let { error, label, id, rows = 10, value = $bindable(''), ...rest }: Props = $props();
 
 	const textareaId = id ?? `textarea-${Math.random().toString(36).slice(2, 9)}`;
 </script>
@@ -15,7 +16,7 @@
 	{#if label}
 		<label for={textareaId} class="textarea-label">{label}</label>
 	{/if}
-	<textarea id={textareaId} class="textarea" {rows} {...rest}></textarea>
+	<textarea id={textareaId} class="textarea" {rows} bind:value {...rest}></textarea>
 	{#if error}
 		<span class="textarea-error">{error}</span>
 	{/if}

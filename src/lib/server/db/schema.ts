@@ -2,7 +2,7 @@ import { pgTable, uuid, varchar, text, boolean, timestamp, integer, primaryKey }
 
 // Users table (extended from Better-Auth)
 export const users = pgTable('users', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 	email: varchar('email', { length: 255 }).unique().notNull(),
 	emailVerified: boolean('email_verified').default(false),
 	name: varchar('name', { length: 100 }),
@@ -16,8 +16,8 @@ export const users = pgTable('users', {
 
 // Sessions table (required by Better-Auth)
 export const sessions = pgTable('sessions', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	userId: uuid('user_id')
+	id: text('id').primaryKey(),
+	userId: text('user_id')
 		.references(() => users.id, { onDelete: 'cascade' })
 		.notNull(),
 	token: text('token').unique().notNull(),
@@ -30,8 +30,8 @@ export const sessions = pgTable('sessions', {
 
 // Accounts table (required by Better-Auth for OAuth)
 export const accounts = pgTable('accounts', {
-	id: uuid('id').primaryKey().defaultRandom(),
-	userId: uuid('user_id')
+	id: text('id').primaryKey(),
+	userId: text('user_id')
 		.references(() => users.id, { onDelete: 'cascade' })
 		.notNull(),
 	accountId: text('account_id').notNull(),
@@ -48,7 +48,7 @@ export const accounts = pgTable('accounts', {
 
 // Verification table (required by Better-Auth)
 export const verifications = pgTable('verifications', {
-	id: uuid('id').primaryKey().defaultRandom(),
+	id: text('id').primaryKey(),
 	identifier: text('identifier').notNull(),
 	value: text('value').notNull(),
 	expiresAt: timestamp('expires_at').notNull(),
@@ -59,7 +59,7 @@ export const verifications = pgTable('verifications', {
 // Projects table
 export const projects = pgTable('projects', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	userId: uuid('user_id')
+	userId: text('user_id')
 		.references(() => users.id, { onDelete: 'cascade' })
 		.notNull(),
 	name: varchar('name', { length: 100 }).notNull(),
@@ -92,10 +92,10 @@ export const milestones = pgTable('milestones', {
 export const follows = pgTable(
 	'follows',
 	{
-		followerId: uuid('follower_id')
+		followerId: text('follower_id')
 			.references(() => users.id, { onDelete: 'cascade' })
 			.notNull(),
-		followingId: uuid('following_id')
+		followingId: text('following_id')
 			.references(() => users.id, { onDelete: 'cascade' })
 			.notNull(),
 		createdAt: timestamp('created_at').defaultNow().notNull()

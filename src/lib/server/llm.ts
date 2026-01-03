@@ -40,6 +40,7 @@ export interface ParsedMilestones {
 export async function parsePRD(prdContent: string): Promise<ParsedMilestones> {
 	const prompt = PARSE_PRD_PROMPT.replace('{PRD_CONTENT}', prdContent);
 
+	console.log('Calling Claude API...');
 	const message = await anthropic.messages.create({
 		model: 'claude-sonnet-4-20250514',
 		max_tokens: 1024,
@@ -62,7 +63,8 @@ export async function parsePRD(prdContent: string): Promise<ParsedMilestones> {
 			throw new Error('Invalid response format');
 		}
 		return parsed;
-	} catch {
+	} catch (e) {
+		console.error('LLM parse error:', e, 'Response:', textContent.text);
 		throw new Error('Failed to parse LLM response as JSON');
 	}
 }

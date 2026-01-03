@@ -4,9 +4,10 @@
 	interface Props extends HTMLInputAttributes {
 		error?: string;
 		label?: string;
+		value?: string;
 	}
 
-	let { error, label, id, ...rest }: Props = $props();
+	let { error, label, id, value = $bindable(''), ...rest }: Props = $props();
 
 	const inputId = id ?? `input-${Math.random().toString(36).slice(2, 9)}`;
 </script>
@@ -15,7 +16,7 @@
 	{#if label}
 		<label for={inputId} class="input-label">{label}</label>
 	{/if}
-	<input id={inputId} class="input" {...rest} />
+	<input id={inputId} class="input" bind:value {...rest} />
 	{#if error}
 		<span class="input-error">{error}</span>
 	{/if}
