@@ -1,10 +1,10 @@
 import { json, error } from '@sveltejs/kit';
 import { db, projects, milestones } from '$lib/server/db';
+import { users } from '$lib/server/db/schema';
 import { generateSlug } from '$lib/utils/slug';
 import { eq, count, and } from 'drizzle-orm';
+import { getMaxProjects } from '$lib/server/plan-limits';
 import type { RequestHandler } from './$types';
-
-const MAX_PROJECTS = 3;
 
 export const POST: RequestHandler = async ({ request, locals }) => {
 	// Check authentication
@@ -59,15 +59,23 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		throw error(400, { message: 'Description trop longue (max 200 caractères)' });
 	}
 
-	// Check project count limit
+	// Get user plan and check project count limit
+	const [userData] = await db
+		.select({ plan: users.plan })
+		.from(users)
+		.where(eq(users.id, locals.user.id));
+
+	const maxProjects = getMaxProjects(userData?.plan ?? 'free');
+
 	const [{ value: projectCount }] = await db
 		.select({ value: count() })
 		.from(projects)
 		.where(eq(projects.userId, locals.user.id));
 
-	if (projectCount >= MAX_PROJECTS) {
+	if (projectCount >= maxProjects) {
+		const upgradeHint = userData?.plan === 'free' ? ' Passez a Pro pour plus de projets!' : '';
 		throw error(400, {
-			message: `Vous avez atteint la limite de ${MAX_PROJECTS} projets`
+			message: `Vous avez atteint la limite de ${maxProjects} projets.${upgradeHint}`
 		});
 	}
 

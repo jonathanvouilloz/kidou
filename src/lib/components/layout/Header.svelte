@@ -79,6 +79,7 @@
 						<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 						<div class="dropdown" onclick={(e) => e.stopPropagation()}>
 							<a href="/{user.username}" class="dropdown-item">{m.nav_myProfile()}</a>
+							<a href="/settings" class="dropdown-item">{m.nav_settings()}</a>
 							<button class="dropdown-item" onclick={handleLogout}>{m.nav_logout()}</button>
 						</div>
 					{/if}
@@ -113,6 +114,7 @@
 			{#if user}
 				<a href="/dashboard" class="mobile-link" onclick={closeMobileMenu}>{m.nav_dashboard()}</a>
 				<a href="/{user.username}" class="mobile-link" onclick={closeMobileMenu}>{m.nav_myProfile()}</a>
+				<a href="/settings" class="mobile-link" onclick={closeMobileMenu}>{m.nav_settings()}</a>
 				<button class="mobile-link" onclick={handleLogout}>{m.nav_logout()}</button>
 			{:else}
 				<a href="/auth/login" class="mobile-link" onclick={closeMobileMenu}>{m.nav_login()}</a>

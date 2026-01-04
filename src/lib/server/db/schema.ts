@@ -1,4 +1,7 @@
-import { pgTable, uuid, varchar, text, boolean, timestamp, integer, primaryKey } from 'drizzle-orm/pg-core';
+import { pgTable, pgEnum, uuid, varchar, text, boolean, timestamp, integer, primaryKey } from 'drizzle-orm/pg-core';
+
+// Plan enum for subscription tiers
+export const planEnum = pgEnum('plan', ['free', 'pro']);
 
 // Users table (extended from Better-Auth)
 export const users = pgTable('users', {
@@ -10,6 +13,11 @@ export const users = pgTable('users', {
 	image: text('image'),
 	avatarUrl: text('avatar_url'),
 	accentColor: varchar('accent_color', { length: 7 }).default('#FFFFFF'),
+	// Subscription fields
+	plan: planEnum('plan').default('free').notNull(),
+	polarCustomerId: text('polar_customer_id'),
+	llmExtractionsUsed: integer('llm_extractions_used').default(0).notNull(),
+	llmExtractionsResetAt: timestamp('llm_extractions_reset_at').defaultNow().notNull(),
 	createdAt: timestamp('created_at').defaultNow().notNull(),
 	updatedAt: timestamp('updated_at').defaultNow().notNull()
 });
@@ -66,6 +74,10 @@ export const projects = pgTable('projects', {
 	slug: varchar('slug', { length: 100 }).notNull(),
 	description: text('description'),
 	originalPrd: text('original_prd'),
+	stack: text('stack').array(),
+	deadline: timestamp('deadline'),
+	githubUrl: text('github_url'),
+	liveUrl: text('live_url'),
 	isPublic: boolean('is_public').default(true),
 	isCompleted: boolean('is_completed').default(false),
 	completedAt: timestamp('completed_at'),

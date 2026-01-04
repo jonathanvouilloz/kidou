@@ -1,12 +1,17 @@
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import { projects } from '$lib/server/db/schema';
+import { projects, users } from '$lib/server/db/schema';
 import { eq, sql } from 'drizzle-orm';
-
-const MAX_PROJECTS = 3;
+import { getMaxProjects, type PlanType } from '$lib/server/plan-limits';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { user } = await parent();
+
+	// Get user plan
+	const [userData] = await db.select({ plan: users.plan }).from(users).where(eq(users.id, user.id));
+
+	const userPlan = (userData?.plan ?? 'free') as PlanType;
+	const maxProjects = getMaxProjects(userPlan);
 
 	const userProjects = await db
 		.select({
@@ -42,7 +47,8 @@ export const load: PageServerLoad = async ({ parent }) => {
 	return {
 		projects: projectsWithProgress,
 		projectCount: userProjects.length,
-		maxProjects: MAX_PROJECTS,
-		canCreateProject: userProjects.length < MAX_PROJECTS
+		maxProjects,
+		canCreateProject: userProjects.length < maxProjects,
+		userPlan
 	};
 };
