@@ -5,11 +5,11 @@ import { eq, sql } from 'drizzle-orm';
 export const PLAN_LIMITS = {
 	free: {
 		maxProjects: 3,
-		maxLlmExtractions: 2
+		maxLlmExtractions: 1
 	},
 	pro: {
 		maxProjects: 5,
-		maxLlmExtractions: Infinity
+		maxLlmExtractions: 50
 	}
 } as const;
 
@@ -43,10 +43,10 @@ export async function checkAndResetLlmUsage(userId: string): Promise<{
 	const now = new Date();
 	const resetAt = new Date(user.llmExtractionsResetAt);
 
-	// Check if a month has passed since last reset
-	const monthsSinceReset = (now.getTime() - resetAt.getTime()) / (1000 * 60 * 60 * 24 * 30);
+	// Check if a day has passed since last reset (24 hours)
+	const hoursSinceReset = (now.getTime() - resetAt.getTime()) / (1000 * 60 * 60);
 
-	if (monthsSinceReset >= 1) {
+	if (hoursSinceReset >= 24) {
 		// Reset the counter
 		const newResetAt = new Date();
 		await db

@@ -17,15 +17,12 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	// Check LLM usage limits
 	const plan = await getUserPlan(locals.user.id);
 	const maxExtractions = getMaxLlmExtractions(plan);
+	const { used } = await checkAndResetLlmUsage(locals.user.id);
 
-	if (maxExtractions !== Infinity) {
-		const { used } = await checkAndResetLlmUsage(locals.user.id);
-
-		if (used >= maxExtractions) {
-			throw error(403, {
-				message: `Limite de ${maxExtractions} extractions IA/mois atteinte. Passez a Pro pour des extractions illimitees!`
-			});
-		}
+	if (used >= maxExtractions) {
+		throw error(403, {
+			message: `Limite de ${maxExtractions} analyse(s) IA/jour atteinte. Passez a Pro pour plus d'analyses!`
+		});
 	}
 
 	// Parse request body
@@ -51,10 +48,8 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	try {
 		const result = await parsePRD(prdContent);
 
-		// Increment LLM usage for free users
-		if (maxExtractions !== Infinity) {
-			await incrementLlmUsage(locals.user.id);
-		}
+		// Increment LLM usage
+		await incrementLlmUsage(locals.user.id);
 
 		if (!result.milestones || result.milestones.length === 0) {
 			throw error(400, { message: 'Aucune milestone détectée dans le PRD' });

@@ -181,6 +181,25 @@
 	function triggerFileInput() {
 		fileInputRef?.click();
 	}
+
+	function handleSkipToManual() {
+		nameError = '';
+
+		// Validate name
+		if (!projectName.trim()) {
+			nameError = m.project_nameRequired();
+			return;
+		}
+
+		if (projectName.trim().length < 3) {
+			nameError = m.project_nameMinLength();
+			return;
+		}
+
+		// Go to step 2 with empty milestones
+		milestones = [];
+		step = 2;
+	}
 </script>
 
 <svelte:head>
@@ -259,43 +278,66 @@
 					/>
 				</div>
 
-				<div class="prd-section">
-					<div class="prd-header">
-						<label class="prd-label" for="prd-content">{m.project_prdLabel()}</label>
-						<button type="button" class="upload-btn" onclick={triggerFileInput} disabled={uploading}>
-							{#if uploading}
-								<Loader size="sm" />
-								{m.project_uploadingFile()}
-							{:else}
-								{m.project_uploadFile()}
-							{/if}
-						</button>
+				{#if data.canAnalyze}
+					<div class="prd-section">
+						<div class="prd-header">
+							<label class="prd-label" for="prd-content">{m.project_prdLabel()}</label>
+							<button type="button" class="upload-btn" onclick={triggerFileInput} disabled={uploading}>
+								{#if uploading}
+									<Loader size="sm" />
+									{m.project_uploadingFile()}
+								{:else}
+									{m.project_uploadFile()}
+								{/if}
+							</button>
+						</div>
+						<p class="prd-help">{m.project_prdHelp()}</p>
+						<input
+							bind:this={fileInputRef}
+							type="file"
+							accept=".txt,.md,.pdf,.docx"
+							onchange={handleFileUpload}
+							class="file-input-hidden"
+						/>
+						<Textarea
+							id="prd-content"
+							bind:value={prdContent}
+							error={analyzeError}
+							placeholder={m.project_prdPlaceholder()}
+							rows={12}
+						/>
 					</div>
-					<p class="prd-help">{m.project_prdHelp()}</p>
-					<input
-						bind:this={fileInputRef}
-						type="file"
-						accept=".txt,.md,.pdf,.docx"
-						onchange={handleFileUpload}
-						class="file-input-hidden"
-					/>
-					<Textarea
-						id="prd-content"
-						bind:value={prdContent}
-						error={analyzeError}
-						placeholder={m.project_prdPlaceholder()}
-						rows={12}
-					/>
-				</div>
 
-				<Button type="submit" variant="primary" disabled={analyzing}>
-					{#if analyzing}
-						<Loader size="sm" />
-						{m.project_analyzing()}
-					{:else}
-						{m.project_analyzeButton()}
-					{/if}
-				</Button>
+					<div class="analyze-actions">
+						<Button type="submit" variant="primary" disabled={analyzing}>
+							{#if analyzing}
+								<Loader size="sm" />
+								{m.project_analyzing()}
+							{:else}
+								{m.project_analyzeButton()}
+							{/if}
+						</Button>
+						<p class="usage-counter">{data.llmUsed}/{data.llmMax} analysis used today</p>
+					</div>
+				{:else}
+					<div class="analysis-limit-box">
+						<div class="limit-header">
+							<span class="limit-badge">⚠️ Daily limit reached</span>
+							<span class="limit-count">{data.llmUsed}/{data.llmMax} used</span>
+						</div>
+						<p class="limit-text">
+							You've used your daily AI analysis. Add milestones manually or upgrade to Pro for more analyses.
+						</p>
+						<div class="limit-buttons">
+							<Button type="button" variant="primary" onclick={handleSkipToManual}>
+								Add milestones manually
+							</Button>
+							<Button type="button" variant="ghost" onclick={() => goto('/settings')}>
+								Upgrade to Pro
+							</Button>
+						</div>
+					</div>
+				{/if}
 			</form>
 		{:else}
 			<header class="page-header">
@@ -487,6 +529,56 @@
 	}
 
 	.limit-actions {
+		display: flex;
+		gap: var(--space-3);
+	}
+
+	/* Analyze actions with counter */
+	.analyze-actions {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.usage-counter {
+		font-size: var(--text-xs);
+		color: var(--color-text-muted);
+		margin: 0;
+	}
+
+	/* Analysis limit box */
+	.analysis-limit-box {
+		padding: var(--space-4);
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+	}
+
+	.limit-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		margin-bottom: var(--space-2);
+	}
+
+	.limit-badge {
+		font-size: var(--text-sm);
+		font-weight: 500;
+		color: var(--color-warning, #f59e0b);
+	}
+
+	.limit-count {
+		font-size: var(--text-xs);
+		color: var(--color-text-muted);
+	}
+
+	.limit-text {
+		font-size: var(--text-sm);
+		color: var(--color-text-secondary);
+		margin: 0 0 var(--space-4);
+	}
+
+	.limit-buttons {
 		display: flex;
 		gap: var(--space-3);
 	}

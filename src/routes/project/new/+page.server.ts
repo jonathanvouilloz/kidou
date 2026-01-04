@@ -2,7 +2,12 @@ import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { projects, users } from '$lib/server/db/schema';
 import { eq, sql } from 'drizzle-orm';
-import { getMaxProjects, type PlanType } from '$lib/server/plan-limits';
+import {
+	getMaxProjects,
+	getMaxLlmExtractions,
+	checkAndResetLlmUsage,
+	type PlanType
+} from '$lib/server/plan-limits';
 
 export const load: PageServerLoad = async ({ parent }) => {
 	const { user } = await parent();
@@ -19,10 +24,18 @@ export const load: PageServerLoad = async ({ parent }) => {
 
 	const projectCount = Number(count);
 
+	// Check LLM usage for analysis limits
+	const { used: llmUsed } = await checkAndResetLlmUsage(user.id);
+	const llmMax = getMaxLlmExtractions(userPlan);
+	const canAnalyze = llmUsed < llmMax;
+
 	return {
 		canCreateProject: projectCount < maxProjects,
 		projectCount,
 		maxProjects,
-		userPlan
+		userPlan,
+		canAnalyze,
+		llmUsed,
+		llmMax
 	};
 };
