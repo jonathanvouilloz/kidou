@@ -190,6 +190,7 @@
 		width: 100%;
 		max-width: 1200px;
 		margin: 0 auto;
+		padding: 0 var(--space-4);
 		display: grid;
 		grid-template-columns: 2fr 1fr;
 		grid-template-rows: auto auto 1fr;
