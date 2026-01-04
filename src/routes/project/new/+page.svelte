@@ -28,6 +28,8 @@
 	let analyzing = $state(false);
 	let analyzeError = $state('');
 	let nameError = $state('');
+	let uploading = $state(false);
+	let fileInputRef: HTMLInputElement;
 
 	// Step 2 state
 	let milestones = $state<Milestone[]>([]);
@@ -139,6 +141,44 @@
 	function goBack() {
 		step = 1;
 	}
+
+	async function handleFileUpload(e: Event) {
+		const input = e.target as HTMLInputElement;
+		const file = input.files?.[0];
+		if (!file) return;
+
+		uploading = true;
+		analyzeError = '';
+
+		try {
+			const formData = new FormData();
+			formData.append('file', file);
+
+			const res = await fetch('/api/parse-file', {
+				method: 'POST',
+				body: formData
+			});
+
+			const data = await res.json();
+
+			if (!res.ok) {
+				analyzeError = data.message || m.project_uploadError();
+				return;
+			}
+
+			prdContent = data.text;
+		} catch {
+			analyzeError = m.project_connectionError();
+		} finally {
+			uploading = false;
+			// Reset file input
+			input.value = '';
+		}
+	}
+
+	function triggerFileInput() {
+		fileInputRef?.click();
+	}
 </script>
 
 <svelte:head>
@@ -200,13 +240,34 @@
 					/>
 				</div>
 
-				<Textarea
-					label={m.project_prdLabel()}
-					bind:value={prdContent}
-					error={analyzeError}
-					placeholder={m.project_prdPlaceholder()}
-					rows={12}
-				/>
+				<div class="prd-section">
+					<div class="prd-header">
+						<label class="prd-label" for="prd-content">{m.project_prdLabel()}</label>
+						<button type="button" class="upload-btn" onclick={triggerFileInput} disabled={uploading}>
+							{#if uploading}
+								<Loader size="sm" />
+								{m.project_uploadingFile()}
+							{:else}
+								{m.project_uploadFile()}
+							{/if}
+						</button>
+					</div>
+					<p class="prd-help">{m.project_prdHelp()}</p>
+					<input
+						bind:this={fileInputRef}
+						type="file"
+						accept=".txt,.md,.pdf,.docx"
+						onchange={handleFileUpload}
+						class="file-input-hidden"
+					/>
+					<Textarea
+						id="prd-content"
+						bind:value={prdContent}
+						error={analyzeError}
+						placeholder={m.project_prdPlaceholder()}
+						rows={12}
+					/>
+				</div>
 
 				<Button type="submit" variant="primary" disabled={analyzing}>
 					{#if analyzing}
@@ -299,6 +360,66 @@
 	.error-message {
 		color: var(--color-error);
 		font-size: var(--text-sm);
+	}
+
+	.prd-section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+	}
+
+	.prd-header {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-3);
+	}
+
+	.prd-label {
+		font-size: var(--text-sm);
+		font-weight: 500;
+		color: var(--color-text);
+	}
+
+	.prd-help {
+		font-size: var(--text-xs);
+		color: var(--color-text-muted);
+		margin: 0;
+	}
+
+	.upload-btn {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: var(--space-1) var(--space-3);
+		font-size: var(--text-xs);
+		color: var(--color-text-secondary);
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-sm);
+		cursor: pointer;
+		transition: all var(--transition-fast);
+	}
+
+	.upload-btn:hover:not(:disabled) {
+		color: var(--color-text);
+		border-color: var(--color-text-muted);
+	}
+
+	.upload-btn:disabled {
+		opacity: 0.6;
+		cursor: not-allowed;
+	}
+
+	.file-input-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip: rect(0, 0, 0, 0);
+		border: 0;
 	}
 
 	.actions {

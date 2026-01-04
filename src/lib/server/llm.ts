@@ -37,6 +37,18 @@ export interface ParsedMilestones {
 	milestones: string[];
 }
 
+/**
+ * Extract JSON object from text that may contain additional content
+ */
+function extractJSON(text: string): string {
+	const start = text.indexOf('{');
+	const end = text.lastIndexOf('}');
+	if (start === -1 || end === -1 || end < start) {
+		throw new Error('No JSON object found in response');
+	}
+	return text.slice(start, end + 1);
+}
+
 export async function parsePRD(prdContent: string): Promise<ParsedMilestones> {
 	const prompt = PARSE_PRD_PROMPT.replace('{PRD_CONTENT}', prdContent);
 
@@ -58,7 +70,8 @@ export async function parsePRD(prdContent: string): Promise<ParsedMilestones> {
 	}
 
 	try {
-		const parsed = JSON.parse(textContent.text) as ParsedMilestones;
+		const jsonStr = extractJSON(textContent.text);
+		const parsed = JSON.parse(jsonStr) as ParsedMilestones;
 		if (!Array.isArray(parsed.milestones)) {
 			throw new Error('Invalid response format');
 		}
