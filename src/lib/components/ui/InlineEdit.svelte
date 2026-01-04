@@ -3,10 +3,11 @@
 		value: string;
 		placeholder?: string;
 		type?: 'text' | 'url';
+		multiline?: boolean;
 		onSave: (newValue: string) => Promise<void>;
 	}
 
-	let { value, placeholder = 'Enter value...', type = 'text', onSave }: Props = $props();
+	let { value, placeholder = 'Enter value...', type = 'text', multiline = false, onSave }: Props = $props();
 
 	let editing = $state(false);
 	let inputValue = $state(value);
@@ -79,9 +80,9 @@
 		</button>
 	</div>
 {:else}
-	<button type="button" class="inline-edit display" onclick={startEdit}>
+	<button type="button" class="inline-edit display" class:multiline onclick={startEdit}>
 		{#if value}
-			<span class="value">{value}</span>
+			<span class="value" class:multiline>{value}</span>
 		{:else}
 			<span class="placeholder">{placeholder}</span>
 		{/if}
@@ -121,6 +122,15 @@
 		overflow: hidden;
 		text-overflow: ellipsis;
 		white-space: nowrap;
+	}
+
+	.value.multiline {
+		white-space: pre-wrap;
+		text-overflow: unset;
+	}
+
+	.inline-edit.display.multiline {
+		align-items: flex-start;
 	}
 
 	.placeholder {

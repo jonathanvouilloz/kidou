@@ -13,14 +13,23 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 	}
 
 	// Parse request body
-	let body: { name?: string; originalPrd?: string; milestones?: string[] };
+	let body: {
+		name?: string;
+		originalPrd?: string;
+		milestones?: string[];
+		description?: string;
+		stack?: string[];
+		deadline?: string;
+		githubUrl?: string;
+		liveUrl?: string;
+	};
 	try {
 		body = await request.json();
 	} catch {
 		throw error(400, { message: 'Corps de requete invalide' });
 	}
 
-	const { name, originalPrd, milestones: milestoneTitles } = body;
+	const { name, originalPrd, milestones: milestoneTitles, description, stack, deadline, githubUrl, liveUrl } = body;
 
 	// Validate name
 	if (!name || typeof name !== 'string' || name.trim().length < 3) {
@@ -43,6 +52,11 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 
 	if (milestoneTitles.length > 20) {
 		throw error(400, { message: 'Maximum 20 milestones autorisées' });
+	}
+
+	// Validate description
+	if (description && description.length > 200) {
+		throw error(400, { message: 'Description trop longue (max 200 caractères)' });
 	}
 
 	// Check project count limit
@@ -92,7 +106,12 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 					userId: locals.user!.id,
 					name: name.trim(),
 					slug,
+					description: description?.trim() || null,
 					originalPrd,
+					stack: stack?.filter((s) => s.trim()) || null,
+					deadline: deadline ? new Date(deadline) : null,
+					githubUrl: githubUrl?.trim() || null,
+					liveUrl: liveUrl?.trim() || null,
 					isPublic: true,
 					isCompleted: false
 				})

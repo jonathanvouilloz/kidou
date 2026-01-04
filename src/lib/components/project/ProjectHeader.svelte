@@ -54,11 +54,7 @@
 				<span class="stat-label">milestones</span>
 			</span>
 			{#if publicUrl}
-				<span class="stat">
-					<a href={publicUrl} class="public-link" target="_blank" rel="noopener">
-						{publicUrl}
-					</a>
-				</span>
+				<a href={publicUrl} class="see-page-link">See project page →</a>
 			{/if}
 		</div>
 	</div>
@@ -106,6 +102,7 @@
 
 	.project-stats {
 		display: flex;
+		align-items: center;
 		gap: var(--space-6);
 		flex-wrap: wrap;
 	}
@@ -127,14 +124,16 @@
 		color: var(--color-text-muted);
 	}
 
-	.public-link {
-		color: var(--color-text-secondary);
+	.see-page-link {
+		margin-left: auto;
+		align-self: flex-end;
+		color: var(--color-text-muted);
 		font-size: var(--text-sm);
-		text-decoration: underline;
-		text-underline-offset: 2px;
+		text-decoration: none;
+		transition: color var(--transition-fast);
 	}
 
-	.public-link:hover {
+	.see-page-link:hover {
 		color: var(--color-text);
 	}
 

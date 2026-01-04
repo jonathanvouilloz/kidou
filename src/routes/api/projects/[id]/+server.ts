@@ -19,7 +19,7 @@ export const PATCH: RequestHandler = async ({ params, request, locals }) => {
 
 	const projectId = params.id;
 
-	let body: { stack?: string[]; githubUrl?: string | null; liveUrl?: string | null };
+	let body: { stack?: string[]; githubUrl?: string | null; liveUrl?: string | null; description?: string | null };
 	try {
 		body = await request.json();
 	} catch {
@@ -75,6 +75,13 @@ export const PATCH: RequestHandler = async ({ params, request, locals }) => {
 			}
 		}
 		updateData.liveUrl = body.liveUrl || null;
+	}
+
+	if (body.description !== undefined) {
+		if (body.description !== null && body.description.length > 200) {
+			throw error(400, { message: 'Description trop longue (max 200 caractères)' });
+		}
+		updateData.description = body.description || null;
 	}
 
 	try {

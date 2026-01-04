@@ -40,6 +40,9 @@
 	let toastType = $state<'success' | 'error' | 'info'>('info');
 	let toastVisible = $state(false);
 
+	// Accordion state
+	let detailsOpen = $state(false);
+
 	// Sync state when data changes (e.g., after navigation)
 	$effect(() => {
 		originalMilestones = data.milestones.map((ms) => ({ ...ms }));
@@ -146,6 +149,21 @@
 		showToast('Live URL updated', 'success');
 	}
 
+	async function handleDescriptionSave(newDesc: string) {
+		const res = await fetch(`/api/projects/${data.project.id}`, {
+			method: 'PATCH',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify({ description: newDesc || null })
+		});
+		if (!res.ok) {
+			const err = await res.json();
+			showToast(err.message || 'Error updating description', 'error');
+			throw new Error('Save failed');
+		}
+		project = { ...project, description: newDesc || null };
+		showToast('Description updated', 'success');
+	}
+
 	// Add new milestone
 	async function handleAddMilestone(title: string) {
 		const res = await fetch('/api/milestones', {
@@ -195,33 +213,50 @@
 			{publicUrl}
 		/>
 
-		<section class="project-details">
-			<div class="detail-row">
-				<span class="detail-label">Stack</span>
-				<InlineTagEdit
-					tags={project.stack ?? []}
-					placeholder="Add technologies..."
-					onSave={handleStackSave}
-				/>
-			</div>
-			<div class="detail-row">
-				<span class="detail-label">GitHub</span>
-				<InlineEdit
-					value={project.githubUrl ?? ''}
-					placeholder="https://github.com/..."
-					type="url"
-					onSave={handleGithubSave}
-				/>
-			</div>
-			<div class="detail-row">
-				<span class="detail-label">Website</span>
-				<InlineEdit
-					value={project.liveUrl ?? ''}
-					placeholder="https://..."
-					type="url"
-					onSave={handleLiveSave}
-				/>
-			</div>
+		<section class="project-details-accordion">
+			<button class="accordion-header" onclick={() => detailsOpen = !detailsOpen}>
+				<span class="accordion-icon" class:open={detailsOpen}>›</span>
+				<span>Edit content</span>
+			</button>
+			{#if detailsOpen}
+				<div class="accordion-content">
+					<div class="detail-block">
+						<span class="detail-label">Description</span>
+						<InlineEdit
+							value={project.description ?? ''}
+							placeholder="Project description..."
+							multiline
+							onSave={handleDescriptionSave}
+						/>
+					</div>
+					<div class="detail-row">
+						<span class="detail-label">Stack</span>
+						<InlineTagEdit
+							tags={project.stack ?? []}
+							placeholder="Add technologies..."
+							onSave={handleStackSave}
+						/>
+					</div>
+					<div class="detail-row">
+						<span class="detail-label">GitHub</span>
+						<InlineEdit
+							value={project.githubUrl ?? ''}
+							placeholder="https://github.com/..."
+							type="url"
+							onSave={handleGithubSave}
+						/>
+					</div>
+					<div class="detail-row">
+						<span class="detail-label">Website</span>
+						<InlineEdit
+							value={project.liveUrl ?? ''}
+							placeholder="https://..."
+							type="url"
+							onSave={handleLiveSave}
+						/>
+					</div>
+				</div>
+			{/if}
 		</section>
 
 		<section class="milestones-section">
@@ -265,7 +300,38 @@
 		margin-bottom: var(--space-4);
 	}
 
-	.project-details {
+	.project-details-accordion {
+		margin-top: var(--space-4);
+	}
+
+	.accordion-header {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		width: 100%;
+		padding: var(--space-2) 0;
+		background: transparent;
+		border: none;
+		color: var(--color-text-muted);
+		font-size: var(--text-sm);
+		cursor: pointer;
+		transition: color var(--transition-fast);
+	}
+
+	.accordion-header:hover {
+		color: var(--color-text);
+	}
+
+	.accordion-icon {
+		font-size: var(--text-base);
+		transition: transform var(--transition-fast);
+	}
+
+	.accordion-icon.open {
+		transform: rotate(90deg);
+	}
+
+	.accordion-content {
 		display: flex;
 		flex-direction: column;
 		gap: var(--space-3);
@@ -273,18 +339,23 @@
 		background: var(--color-bg-elevated);
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
-		margin-top: var(--space-6);
+		margin-top: var(--space-2);
 	}
 
 	.detail-row {
 		display: flex;
-		align-items: flex-start;
+		align-items: center;
 		gap: var(--space-3);
+	}
+
+	.detail-block {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-1);
 	}
 
 	.detail-label {
 		min-width: 80px;
-		padding-top: var(--space-1);
 		font-size: var(--text-sm);
 		color: var(--color-text-muted);
 	}
