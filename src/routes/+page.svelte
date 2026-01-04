@@ -3,9 +3,11 @@
 	import TerminalProgress from '$lib/components/terminal/TerminalProgress.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
+	import PulsatingCircles from '$lib/components/ui/PulsatingCircles.svelte';
 	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
+
 
 	const demoMilestones = [
 		{ id: '1', title: 'Setup project', isCompleted: true },
@@ -27,6 +29,7 @@
 <main class="landing">
 	<div class="container">
 		<header class="hero">
+			<PulsatingCircles />
 			<h1 class="logo">kidou<span class="cursor">_</span></h1>
 			<p class="tagline">Track your progress, build in public</p>
 		</header>
@@ -83,6 +86,7 @@
 	}
 
 	.hero {
+		position: relative;
 		text-align: center;
 		margin-bottom: var(--space-8);
 	}

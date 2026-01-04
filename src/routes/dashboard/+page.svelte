@@ -23,7 +23,7 @@
 			{#if data.canCreateProject}
 				<Button variant="primary" onclick={() => goto('/project/new')}>{m.dashboard_newProject()}</Button>
 			{:else}
-				<Button variant="secondary" disabled>{m.dashboard_limitReached()}</Button>
+				<Button variant="primary" onclick={() => goto('/api/checkout')}>Upgrade to Pro</Button>
 			{/if}
 		</header>
 

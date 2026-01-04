@@ -1,4 +1,4 @@
-import { Polar } from '@polar-sh/sveltekit';
+import { Polar } from '@polar-sh/sdk';
 import { POLAR_ACCESS_TOKEN } from '$env/static/private';
 import { PUBLIC_POLAR_SERVER } from '$env/static/public';
 
