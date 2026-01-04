@@ -5,17 +5,18 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Toast from '$lib/components/ui/Toast.svelte';
 	import Loader from '$lib/components/ui/Loader.svelte';
+	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
 
 	// Original state (from server)
-	let originalMilestones = $state(data.milestones.map((m) => ({ ...m })));
+	let originalMilestones = $state(data.milestones.map((ms) => ({ ...ms })));
 
 	// Editable state (local)
-	let milestones = $state(data.milestones.map((m) => ({ ...m })));
+	let milestones = $state(data.milestones.map((ms) => ({ ...ms })));
 
 	// Derived values
-	let completedCount = $derived(milestones.filter((m) => m.isCompleted).length);
+	let completedCount = $derived(milestones.filter((ms) => ms.isCompleted).length);
 	let progress = $derived(
 		data.totalCount > 0 ? Math.round((completedCount / data.totalCount) * 100) : 0
 	);
@@ -23,7 +24,7 @@
 
 	// Check if there are unsaved changes
 	let changedCount = $derived(
-		milestones.filter((m, i) => m.isCompleted !== originalMilestones[i]?.isCompleted).length
+		milestones.filter((ms, i) => ms.isCompleted !== originalMilestones[i]?.isCompleted).length
 	);
 	let hasChanges = $derived(changedCount > 0);
 
@@ -37,8 +38,8 @@
 
 	// Sync state when data changes (e.g., after navigation)
 	$effect(() => {
-		originalMilestones = data.milestones.map((m) => ({ ...m }));
-		milestones = data.milestones.map((m) => ({ ...m }));
+		originalMilestones = data.milestones.map((ms) => ({ ...ms }));
+		milestones = data.milestones.map((ms) => ({ ...ms }));
 	});
 
 	function showToast(message: string, type: 'success' | 'error' | 'info') {
@@ -51,7 +52,7 @@
 
 	// Toggle is now instant (local only)
 	function handleToggle(id: string, completed: boolean) {
-		milestones = milestones.map((m) => (m.id === id ? { ...m, isCompleted: completed } : m));
+		milestones = milestones.map((ms) => (ms.id === id ? { ...ms, isCompleted: completed } : ms));
 	}
 
 	// Save all changes at once
@@ -64,27 +65,27 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					projectId: data.project.id,
-					milestones: milestones.map((m) => ({ id: m.id, isCompleted: m.isCompleted }))
+					milestones: milestones.map((ms) => ({ id: ms.id, isCompleted: ms.isCompleted }))
 				})
 			});
 
 			if (!res.ok) {
 				const errorData = await res.json();
-				throw new Error(errorData.message || 'Erreur');
+				throw new Error(errorData.message || m.common_error());
 			}
 
 			const result = await res.json();
 
 			// Update original state to match current
-			originalMilestones = milestones.map((m) => ({ ...m }));
+			originalMilestones = milestones.map((ms) => ({ ...ms }));
 
 			if (result.projectCompleted) {
-				showToast('Projet terminé ! Félicitations !', 'success');
+				showToast(m.projectView_projectCompleted(), 'success');
 			} else {
-				showToast('Changements sauvegardés', 'success');
+				showToast(m.projectView_saveSuccess(), 'success');
 			}
 		} catch {
-			showToast('Erreur lors de la sauvegarde', 'error');
+			showToast(m.projectView_saveError(), 'error');
 		} finally {
 			saving = false;
 		}
@@ -92,7 +93,7 @@
 
 	// Cancel and reset to original
 	function handleCancel() {
-		milestones = originalMilestones.map((m) => ({ ...m }));
+		milestones = originalMilestones.map((ms) => ({ ...ms }));
 	}
 
 	// Build public URL for sharing
@@ -109,7 +110,7 @@
 	<div class="container">
 		<nav class="breadcrumb">
 			<Button variant="ghost" size="sm" onclick={() => goto('/dashboard')}>
-				← Dashboard
+				← {m.projectView_backToDashboard()}
 			</Button>
 		</nav>
 
@@ -124,20 +125,20 @@
 		/>
 
 		<section class="milestones-section">
-			<h2 class="section-title">Milestones</h2>
+			<h2 class="section-title">{m.projectView_milestones()}</h2>
 			<MilestoneList {milestones} onToggle={handleToggle} />
 
 			{#if hasChanges}
 				<div class="actions-bar">
 					<Button variant="ghost" onclick={handleCancel} disabled={saving}>
-						Annuler
+						{m.common_cancel()}
 					</Button>
 					<Button variant="primary" onclick={handleSave} disabled={saving}>
 						{#if saving}
 							<Loader size="sm" />
-							Sauvegarde...
+							{m.projectView_saving()}
 						{:else}
-							Sauvegarder ({changedCount})
+							{m.projectView_saveChanges({ count: changedCount })}
 						{/if}
 					</Button>
 				</div>

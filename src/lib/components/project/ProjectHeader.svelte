@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Badge from '$lib/components/ui/Badge.svelte';
 	import type { Snippet } from 'svelte';
+	import * as m from '$lib/paraglide/messages';
 
 	interface Props {
 		name: string;
@@ -31,14 +32,14 @@
 			<h1 class="project-name">{name}</h1>
 			<div class="project-badges">
 				{#if isCompleted}
-					<Badge variant="success">Terminé</Badge>
+					<Badge variant="success">{m.projectView_statusCompleted()}</Badge>
 				{:else}
-					<Badge variant="warning">En cours</Badge>
+					<Badge variant="warning">{m.projectView_statusInProgress()}</Badge>
 				{/if}
 				{#if isPublic}
-					<Badge>Public</Badge>
+					<Badge>{m.projectView_statusPublic()}</Badge>
 				{:else}
-					<Badge variant="default">Privé</Badge>
+					<Badge variant="default">{m.projectView_statusPrivate()}</Badge>
 				{/if}
 			</div>
 		</div>
@@ -46,7 +47,7 @@
 		<div class="project-stats">
 			<span class="stat">
 				<span class="stat-value">{progress.toFixed(0)}%</span>
-				<span class="stat-label">progression</span>
+				<span class="stat-label">{m.projectView_progress()}</span>
 			</span>
 			<span class="stat">
 				<span class="stat-value">{completedCount}/{totalCount}</span>

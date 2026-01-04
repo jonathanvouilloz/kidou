@@ -8,6 +8,7 @@
 	import Avatar from '$lib/components/ui/Avatar.svelte';
 	import Modal from '$lib/components/ui/Modal.svelte';
 	import Toast from '$lib/components/ui/Toast.svelte';
+	import FormError from '$lib/components/ui/FormError.svelte';
 	import TerminalProgress from '$lib/components/terminal/TerminalProgress.svelte';
 	import ProjectCard from '$lib/components/project/ProjectCard.svelte';
 	import MilestoneList from '$lib/components/project/MilestoneList.svelte';
@@ -188,6 +189,15 @@
 			<Toast type="success" message="Opération réussie !" />
 			<Toast type="error" message="Une erreur est survenue." />
 			<Toast type="info" message="Information importante." visible={toastVisible} onClose={() => (toastVisible = false)} />
+		</div>
+	</section>
+
+	<!-- Form Error -->
+	<section class="section">
+		<h2>Form Error</h2>
+		<div class="component-stack">
+			<FormError message="Ce champ est requis" />
+			<FormError message="Email ou mot de passe incorrect" />
 		</div>
 	</section>
 

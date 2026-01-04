@@ -4,7 +4,9 @@
 	import Textarea from '$lib/components/ui/Textarea.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Loader from '$lib/components/ui/Loader.svelte';
+	import TagInput from '$lib/components/ui/TagInput.svelte';
 	import EditableMilestoneList from '$lib/components/project/EditableMilestoneList.svelte';
+	import * as m from '$lib/paraglide/messages';
 
 	interface Milestone {
 		id: string;
@@ -17,6 +19,11 @@
 
 	// Step 1 state
 	let projectName = $state('');
+	let description = $state('');
+	let stack = $state<string[]>([]);
+	let deadline = $state('');
+	let githubUrl = $state('');
+	let liveUrl = $state('');
 	let prdContent = $state('');
 	let analyzing = $state(false);
 	let analyzeError = $state('');
@@ -34,18 +41,18 @@
 
 		// Validate name
 		if (!projectName.trim()) {
-			nameError = 'Le nom du projet est requis';
+			nameError = m.project_nameRequired();
 			return;
 		}
 
 		if (projectName.trim().length < 3) {
-			nameError = 'Le nom doit contenir au moins 3 caractères';
+			nameError = m.project_nameMinLength();
 			return;
 		}
 
 		// Validate PRD
 		if (prdContent.trim().length < 50) {
-			analyzeError = 'Le PRD doit contenir au moins 50 caractères';
+			analyzeError = m.project_prdMinLength();
 			return;
 		}
 
@@ -61,12 +68,12 @@
 			const data = await res.json();
 
 			if (!res.ok) {
-				analyzeError = data.message || "Erreur lors de l'analyse";
+				analyzeError = data.message || m.project_analyzeError();
 				return;
 			}
 
 			if (!data.milestones || data.milestones.length === 0) {
-				analyzeError = 'Aucune milestone détectée. Vérifiez le contenu du PRD.';
+				analyzeError = m.project_noMilestones();
 				return;
 			}
 
@@ -79,7 +86,7 @@
 
 			step = 2;
 		} catch {
-			analyzeError = 'Erreur de connexion. Réessayez.';
+			analyzeError = m.project_connectionError();
 		} finally {
 			analyzing = false;
 		}
@@ -89,10 +96,10 @@
 		createError = '';
 
 		// Filter out empty milestones
-		const validMilestones = milestones.filter((m) => m.title.trim());
+		const validMilestones = milestones.filter((ms) => ms.title.trim());
 
 		if (validMilestones.length === 0) {
-			createError = 'Ajoutez au moins une milestone';
+			createError = m.project_addMilestoneMin();
 			return;
 		}
 
@@ -104,21 +111,26 @@
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
 					name: projectName.trim(),
+					description: description.trim() || undefined,
+					stack: stack.length > 0 ? stack : undefined,
+					deadline: deadline || undefined,
+					githubUrl: githubUrl.trim() || undefined,
+					liveUrl: liveUrl.trim() || undefined,
 					originalPrd: prdContent,
-					milestones: validMilestones.map((m) => m.title)
+					milestones: validMilestones.map((ms) => ms.title)
 				})
 			});
 
 			const data = await res.json();
 
 			if (!res.ok) {
-				createError = data.message || 'Erreur lors de la création';
+				createError = data.message || m.project_createError();
 				return;
 			}
 
 			await goto(`/project/${data.id}`);
 		} catch {
-			createError = 'Erreur de connexion. Réessayez.';
+			createError = m.project_connectionError();
 		} finally {
 			creating = false;
 		}
@@ -130,53 +142,90 @@
 </script>
 
 <svelte:head>
-	<title>Nouveau projet - Kidou</title>
+	<title>{m.project_newTitle()} - Kidou</title>
 </svelte:head>
 
 <main class="new-project">
 	<div class="container">
 		{#if step === 1}
 			<header class="page-header">
-				<h1>Nouveau projet</h1>
-				<p class="subtitle">Entrez le nom de votre projet et collez votre PRD pour extraire les milestones.</p>
+				<h1>{m.project_newTitle()}</h1>
+				<p class="subtitle">{m.project_newSubtitle()}</p>
 			</header>
 
 			<form class="project-form" onsubmit={handleAnalyze}>
 				<Input
-					label="Nom du projet"
+					label={m.project_nameLabel()}
 					bind:value={projectName}
 					error={nameError}
-					placeholder="Mon super projet"
+					placeholder={m.project_namePlaceholder()}
 					maxlength={100}
 					required
 				/>
 
 				<Textarea
-					label="Contenu du PRD"
+					label={m.project_descriptionLabel()}
+					bind:value={description}
+					placeholder={m.project_descriptionPlaceholder()}
+					rows={3}
+				/>
+
+				<TagInput
+					label={m.project_stackLabel()}
+					bind:tags={stack}
+					placeholder={m.project_stackPlaceholder()}
+					maxTags={10}
+				/>
+
+				<div class="form-row">
+					<Input
+						label={m.project_deadlineLabel()}
+						type="date"
+						bind:value={deadline}
+					/>
+				</div>
+
+				<div class="form-row">
+					<Input
+						label={m.project_githubLabel()}
+						type="url"
+						bind:value={githubUrl}
+						placeholder="https://github.com/..."
+					/>
+					<Input
+						label={m.project_liveLabel()}
+						type="url"
+						bind:value={liveUrl}
+						placeholder="https://..."
+					/>
+				</div>
+
+				<Textarea
+					label={m.project_prdLabel()}
 					bind:value={prdContent}
 					error={analyzeError}
-					placeholder="Collez votre PRD, specs, ou notes de projet ici..."
+					placeholder={m.project_prdPlaceholder()}
 					rows={12}
 				/>
 
 				<Button type="submit" variant="primary" disabled={analyzing}>
 					{#if analyzing}
 						<Loader size="sm" />
-						Analyse en cours...
+						{m.project_analyzing()}
 					{:else}
-						Analyser
+						{m.project_analyzeButton()}
 					{/if}
 				</Button>
 			</form>
 		{:else}
 			<header class="page-header">
-				<Button variant="ghost" size="sm" onclick={goBack}>← Retour</Button>
+				<Button variant="ghost" size="sm" onclick={goBack}>← {m.common_back()}</Button>
 				<h1>{projectName}</h1>
-				<p class="subtitle">{milestones.length} milestone{milestones.length > 1 ? 's' : ''} détectée{milestones.length > 1 ? 's' : ''}</p>
+				<p class="subtitle">{m.project_milestonesDetected({ count: milestones.length })}</p>
 			</header>
 
 			<section class="milestones-section">
-				<p class="instructions">Modifiez, supprimez ou réordonnez les milestones avant de créer le projet.</p>
+				<p class="instructions">{m.project_editMilestonesHint()}</p>
 
 				<EditableMilestoneList bind:milestones />
 
@@ -188,9 +237,9 @@
 					<Button variant="primary" onclick={handleCreate} disabled={creating || milestones.length === 0}>
 						{#if creating}
 							<Loader size="sm" />
-							Création...
+							{m.project_creating()}
 						{:else}
-							Créer le projet
+							{m.project_createButton()}
 						{/if}
 					</Button>
 				</div>
@@ -230,6 +279,12 @@
 		gap: var(--space-4);
 	}
 
+	.form-row {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+		gap: var(--space-4);
+	}
+
 	.milestones-section {
 		display: flex;
 		flex-direction: column;
@@ -250,5 +305,11 @@
 		margin-top: var(--space-4);
 		display: flex;
 		justify-content: flex-end;
+	}
+
+	@media (max-width: 480px) {
+		.new-project {
+			padding: var(--space-4) var(--space-3);
+		}
 	}
 </style>

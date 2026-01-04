@@ -3,11 +3,12 @@
 	import TerminalProgress from '$lib/components/terminal/TerminalProgress.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
+	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
 
 	const demoMilestones = [
-		{ id: '1', title: 'Setup projet', isCompleted: true },
+		{ id: '1', title: 'Setup project', isCompleted: true },
 		{ id: '2', title: 'Design system', isCompleted: true },
 		{ id: '3', title: 'Auth system', isCompleted: false },
 		{ id: '4', title: 'Core features', isCompleted: false },
@@ -36,11 +37,11 @@
 
 		<section class="cta">
 			{#if data.user}
-				<Button onclick={() => goto('/dashboard')}>Aller au dashboard</Button>
+				<Button onclick={() => goto('/dashboard')}>{m.landing_ctaDashboard()}</Button>
 			{:else}
-				<Button onclick={() => goto('/auth/register')}>Commencer gratuitement</Button>
+				<Button onclick={() => goto('/auth/register')}>{m.landing_ctaStart()}</Button>
 				<p class="cta-secondary">
-					Deja un compte ? <a href="/auth/login">Se connecter</a>
+					{m.landing_alreadyAccount()} <a href="/auth/login">{m.landing_login()}</a>
 				</p>
 			{/if}
 		</section>
@@ -48,18 +49,18 @@
 		<section class="features">
 			<div class="feature">
 				<span class="feature-icon">01</span>
-				<h3>Upload ton PRD</h3>
-				<p>Colle ton document, l'IA extrait tes milestones</p>
+				<h3>{m.landing_feature1Title()}</h3>
+				<p>{m.landing_feature1Desc()}</p>
 			</div>
 			<div class="feature">
 				<span class="feature-icon">02</span>
-				<h3>Track ta progression</h3>
-				<p>Coche tes milestones, visualise ton avancement</p>
+				<h3>{m.landing_feature2Title()}</h3>
+				<p>{m.landing_feature2Desc()}</p>
 			</div>
 			<div class="feature">
 				<span class="feature-icon">03</span>
-				<h3>Build in public</h3>
-				<p>Partage ta page publique style terminal</p>
+				<h3>{m.landing_feature3Title()}</h3>
+				<p>{m.landing_feature3Desc()}</p>
 			</div>
 		</section>
 	</div>

@@ -4,6 +4,9 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Input from '$lib/components/ui/Input.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
+	import Loader from '$lib/components/ui/Loader.svelte';
+	import FormError from '$lib/components/ui/FormError.svelte';
+	import * as m from '$lib/paraglide/messages';
 
 	let email = $state('');
 	let password = $state('');
@@ -22,12 +25,12 @@
 			});
 
 			if (result.error) {
-				error = result.error.message ?? 'Erreur de connexion';
+				error = result.error.message ?? m.auth_loginError();
 			} else {
 				await goto('/dashboard');
 			}
 		} catch (err) {
-			error = 'Erreur de connexion. Vérifiez vos identifiants.';
+			error = m.auth_loginErrorCredentials();
 		} finally {
 			loading = false;
 		}
@@ -35,20 +38,18 @@
 </script>
 
 <svelte:head>
-	<title>Connexion - Kidou</title>
+	<title>{m.auth_loginPageTitle()}</title>
 </svelte:head>
 
 <Card>
 	<form onsubmit={handleSubmit} class="auth-form">
-		<h1 class="form-title">Connexion</h1>
+		<h1 class="form-title">{m.auth_loginTitle()}</h1>
 
-		{#if error}
-			<div class="error-message">{error}</div>
-		{/if}
+		<FormError message={error} />
 
 		<Input
 			type="email"
-			label="Email"
+			label={m.auth_email()}
 			bind:value={email}
 			required
 			autocomplete="email"
@@ -57,7 +58,7 @@
 
 		<Input
 			type="password"
-			label="Mot de passe"
+			label={m.auth_password()}
 			bind:value={password}
 			required
 			autocomplete="current-password"
@@ -65,12 +66,17 @@
 		/>
 
 		<Button type="submit" disabled={loading}>
-			{loading ? 'Connexion...' : 'Se connecter'}
+			{#if loading}
+				<Loader size="sm" />
+				{m.auth_loggingIn()}
+			{:else}
+				{m.auth_loginButton()}
+			{/if}
 		</Button>
 
 		<p class="form-footer">
-			Pas encore de compte ?
-			<a href="/auth/register">Créer un compte</a>
+			{m.auth_noAccount()}
+			<a href="/auth/register">{m.auth_createAccount()}</a>
 		</p>
 	</form>
 </Card>
@@ -87,15 +93,6 @@
 		font-weight: 500;
 		text-align: center;
 		margin-bottom: var(--space-2);
-	}
-
-	.error-message {
-		padding: var(--space-3);
-		background: rgba(255, 51, 51, 0.1);
-		border: 1px solid var(--color-error);
-		border-radius: var(--radius-sm);
-		color: var(--color-error);
-		font-size: var(--text-sm);
 	}
 
 	.form-footer {

@@ -2,6 +2,7 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import { signOut } from '$lib/auth-client';
 	import { goto } from '$app/navigation';
+	import * as m from '$lib/paraglide/messages';
 
 	interface Props {
 		user?: {
@@ -55,8 +56,9 @@
 
 		<!-- Desktop nav -->
 		<nav class="nav desktop-nav">
+			<a href="/community" class="nav-link">{m.nav_explore()}</a>
 			{#if user}
-				<a href="/dashboard" class="nav-link">Dashboard</a>
+				<a href="/dashboard" class="nav-link">{m.nav_dashboard()}</a>
 				<div class="user-menu">
 					<button
 						class="user-button"
@@ -76,15 +78,15 @@
 					{#if menuOpen}
 						<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 						<div class="dropdown" onclick={(e) => e.stopPropagation()}>
-							<a href="/{user.username}" class="dropdown-item">Mon profil</a>
-							<button class="dropdown-item" onclick={handleLogout}>Déconnexion</button>
+							<a href="/{user.username}" class="dropdown-item">{m.nav_myProfile()}</a>
+							<button class="dropdown-item" onclick={handleLogout}>{m.nav_logout()}</button>
 						</div>
 					{/if}
 				</div>
 			{:else}
-				<a href="/auth/login" class="nav-link">Connexion</a>
+				<a href="/auth/login" class="nav-link">{m.nav_login()}</a>
 				<Button variant="primary" size="sm" onclick={() => goto('/auth/register')}>
-					Inscription
+					{m.nav_register()}
 				</Button>
 			{/if}
 		</nav>
@@ -107,13 +109,14 @@
 		<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 		<div class="mobile-overlay" onclick={closeMobileMenu}></div>
 		<nav class="mobile-menu">
+			<a href="/community" class="mobile-link" onclick={closeMobileMenu}>{m.nav_explore()}</a>
 			{#if user}
-				<a href="/dashboard" class="mobile-link" onclick={closeMobileMenu}>Dashboard</a>
-				<a href="/{user.username}" class="mobile-link" onclick={closeMobileMenu}>Mon profil</a>
-				<button class="mobile-link" onclick={handleLogout}>Déconnexion</button>
+				<a href="/dashboard" class="mobile-link" onclick={closeMobileMenu}>{m.nav_dashboard()}</a>
+				<a href="/{user.username}" class="mobile-link" onclick={closeMobileMenu}>{m.nav_myProfile()}</a>
+				<button class="mobile-link" onclick={handleLogout}>{m.nav_logout()}</button>
 			{:else}
-				<a href="/auth/login" class="mobile-link" onclick={closeMobileMenu}>Connexion</a>
-				<a href="/auth/register" class="mobile-link" onclick={closeMobileMenu}>Inscription</a>
+				<a href="/auth/login" class="mobile-link" onclick={closeMobileMenu}>{m.nav_login()}</a>
+				<a href="/auth/register" class="mobile-link" onclick={closeMobileMenu}>{m.nav_register()}</a>
 			{/if}
 		</nav>
 	{/if}
@@ -331,6 +334,16 @@
 		.mobile-menu {
 			display: flex;
 			flex-direction: column;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.header-container {
+			padding: var(--space-3);
+		}
+
+		.logo {
+			font-size: var(--text-lg);
 		}
 	}
 </style>

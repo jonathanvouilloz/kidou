@@ -3,6 +3,7 @@
 	import ProjectCard from '$lib/components/project/ProjectCard.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
+	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
 </script>
@@ -15,24 +16,24 @@
 	<div class="container">
 		<header class="dashboard-header">
 			<div class="header-left">
-				<h1>Mes projets</h1>
-				<Badge variant="default">{data.projectCount}/{data.maxProjects} projets</Badge>
+				<h1>{m.dashboard_title()}</h1>
+				<Badge variant="default">{m.dashboard_projectCount({ count: data.projectCount, max: data.maxProjects })}</Badge>
 			</div>
 
 			{#if data.canCreateProject}
-				<Button variant="primary" onclick={() => goto('/project/new')}>+ Nouveau projet</Button>
+				<Button variant="primary" onclick={() => goto('/project/new')}>{m.dashboard_newProject()}</Button>
 			{:else}
-				<Button variant="secondary" disabled>Limite atteinte</Button>
+				<Button variant="secondary" disabled>{m.dashboard_limitReached()}</Button>
 			{/if}
 		</header>
 
 		{#if data.projects.length === 0}
 			<section class="empty-state">
 				<p class="empty-icon">&gt;_</p>
-				<p>Aucun projet pour l'instant.</p>
-				<p class="hint">Créez votre premier projet pour commencer à tracker votre progression.</p>
+				<p>{m.dashboard_emptyTitle()}</p>
+				<p class="hint">{m.dashboard_emptyHint()}</p>
 				<Button variant="primary" onclick={() => goto('/project/new')}>
-					Créer mon premier projet
+					{m.dashboard_createFirst()}
 				</Button>
 			</section>
 		{:else}
@@ -109,5 +110,25 @@
 		margin-bottom: var(--space-6);
 		font-size: var(--text-sm);
 		color: var(--color-text-muted);
+	}
+
+	@media (max-width: 768px) {
+		.dashboard {
+			padding: var(--space-6) var(--space-3);
+		}
+
+		.dashboard-header h1 {
+			font-size: var(--text-xl);
+		}
+	}
+
+	@media (max-width: 480px) {
+		.dashboard {
+			padding: var(--space-4) var(--space-3);
+		}
+
+		.projects-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

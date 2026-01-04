@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte';
+	import * as m from '$lib/paraglide/messages';
 
 	interface Milestone {
 		id: string;
@@ -51,7 +52,7 @@
 
 <div class="milestone-list">
 	{#if milestones.length === 0}
-		<p class="empty-message">Aucune milestone. Ajoutez-en une ci-dessous.</p>
+		<p class="empty-message">{m.milestones_empty()}</p>
 	{:else}
 		{#each milestones as milestone, index (milestone.id)}
 			<div class="milestone-row">
@@ -61,7 +62,7 @@
 					type="text"
 					class="milestone-input"
 					value={milestone.title}
-					placeholder="Titre de la milestone..."
+					placeholder={m.milestones_placeholder()}
 					oninput={(e) => updateTitle(milestone.id, e.currentTarget.value)}
 				/>
 
@@ -71,7 +72,7 @@
 						class="action-btn"
 						disabled={index === 0}
 						onclick={() => moveUp(index)}
-						title="Monter"
+						title={m.milestones_moveUp()}
 					>
 						↑
 					</button>
@@ -80,7 +81,7 @@
 						class="action-btn"
 						disabled={index === milestones.length - 1}
 						onclick={() => moveDown(index)}
-						title="Descendre"
+						title={m.milestones_moveDown()}
 					>
 						↓
 					</button>
@@ -88,7 +89,7 @@
 						type="button"
 						class="action-btn delete"
 						onclick={() => deleteMilestone(milestone.id)}
-						title="Supprimer"
+						title={m.milestones_delete()}
 					>
 						×
 					</button>
@@ -97,7 +98,7 @@
 		{/each}
 	{/if}
 
-	<Button variant="ghost" size="sm" onclick={addMilestone}>+ Ajouter une milestone</Button>
+	<Button variant="ghost" size="sm" onclick={addMilestone}>{m.milestones_addMilestone()}</Button>
 </div>
 
 <style>

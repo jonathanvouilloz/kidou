@@ -1,10 +1,11 @@
 <script lang="ts">
 	import { page } from '$app/stores';
 	import Button from '$lib/components/ui/Button.svelte';
+	import * as m from '$lib/paraglide/messages';
 </script>
 
 <svelte:head>
-	<title>Erreur {$page.status} - Kidou</title>
+	<title>{m.errors_pageTitle({ status: $page.status })}</title>
 </svelte:head>
 
 <main class="error-page">
@@ -38,15 +39,15 @@
 			</div>
 			<div class="line message">
 				{#if $page.status === 404}
-					La page demandée n'existe pas.
+					{m.errors_404Message()}
 				{:else if $page.status === 500}
-					Une erreur serveur s'est produite.
+					{m.errors_500Message()}
 				{:else if $page.status === 403}
-					Vous n'avez pas accès à cette ressource.
+					{m.errors_403Message()}
 				{:else if $page.status === 401}
-					Vous devez être connecté.
+					{m.errors_401Message()}
 				{:else}
-					{$page.error?.message || 'Une erreur est survenue.'}
+					{$page.error?.message || m.errors_genericMessage()}
 				{/if}
 			</div>
 			<div class="line">
@@ -57,8 +58,8 @@
 	</div>
 
 	<div class="actions">
-		<Button variant="primary" onclick={() => history.back()}>← Retour</Button>
-		<Button variant="secondary" onclick={() => (window.location.href = '/')}>Accueil</Button>
+		<Button variant="primary" onclick={() => history.back()}>← {m.common_back()}</Button>
+		<Button variant="secondary" onclick={() => (window.location.href = '/')}>{m.common_home()}</Button>
 	</div>
 </main>
 

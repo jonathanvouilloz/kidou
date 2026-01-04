@@ -4,6 +4,9 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Input from '$lib/components/ui/Input.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
+	import Loader from '$lib/components/ui/Loader.svelte';
+	import FormError from '$lib/components/ui/FormError.svelte';
+	import * as m from '$lib/paraglide/messages';
 
 	let email = $state('');
 	let username = $state('');
@@ -13,10 +16,10 @@
 
 	// Validation username (slug URL-safe)
 	function validateUsername(value: string): string | null {
-		if (value.length < 3) return 'Minimum 3 caractères';
-		if (value.length > 50) return 'Maximum 50 caractères';
+		if (value.length < 3) return m.auth_usernameMinLength();
+		if (value.length > 50) return m.auth_usernameMaxLength();
 		if (!/^[a-z0-9_-]+$/.test(value)) {
-			return 'Lettres minuscules, chiffres, tirets et underscores uniquement';
+			return m.auth_usernameFormat();
 		}
 		return null;
 	}
@@ -33,7 +36,7 @@
 		}
 
 		if (password.length < 8) {
-			errors.password = 'Minimum 8 caractères';
+			errors.password = m.auth_passwordMinLength();
 			return;
 		}
 
@@ -49,17 +52,17 @@
 
 			if (result.error) {
 				if (result.error.message?.includes('username')) {
-					errors.username = "Ce nom d'utilisateur est déjà pris";
+					errors.username = m.auth_usernameTaken();
 				} else if (result.error.message?.includes('email')) {
-					errors.email = 'Cet email est déjà utilisé';
+					errors.email = m.auth_emailTaken();
 				} else {
-					errors.form = result.error.message ?? "Erreur lors de l'inscription";
+					errors.form = result.error.message ?? m.auth_registerError();
 				}
 			} else {
 				await goto('/dashboard');
 			}
 		} catch (err) {
-			errors.form = "Erreur lors de l'inscription. Réessayez.";
+			errors.form = m.auth_registerErrorRetry();
 		} finally {
 			loading = false;
 		}
@@ -67,20 +70,18 @@
 </script>
 
 <svelte:head>
-	<title>Inscription - Kidou</title>
+	<title>{m.auth_registerPageTitle()}</title>
 </svelte:head>
 
 <Card>
 	<form onsubmit={handleSubmit} class="auth-form">
-		<h1 class="form-title">Créer un compte</h1>
+		<h1 class="form-title">{m.auth_registerTitle()}</h1>
 
-		{#if errors.form}
-			<div class="error-message">{errors.form}</div>
-		{/if}
+		<FormError message={errors.form || ''} />
 
 		<Input
 			type="email"
-			label="Email"
+			label={m.auth_email()}
 			bind:value={email}
 			error={errors.email}
 			required
@@ -91,39 +92,44 @@
 		<div class="input-group">
 			<Input
 				type="text"
-				label="Nom d'utilisateur"
+				label={m.auth_username()}
 				bind:value={username}
 				error={errors.username}
 				required
 				autocomplete="username"
 				disabled={loading}
-				placeholder="mon-pseudo"
+				placeholder={m.auth_usernamePlaceholder()}
 			/>
 			<p class="input-hint">
-				Visible dans votre URL publique: kidou.io/{username || 'votre-pseudo'}
+				{m.auth_usernameHint({ username: username || 'your-username' })}
 			</p>
 		</div>
 
 		<div class="input-group">
 			<Input
 				type="password"
-				label="Mot de passe"
+				label={m.auth_password()}
 				bind:value={password}
 				error={errors.password}
 				required
 				autocomplete="new-password"
 				disabled={loading}
 			/>
-			<p class="input-hint">Minimum 8 caractères</p>
+			<p class="input-hint">{m.auth_passwordHint()}</p>
 		</div>
 
 		<Button type="submit" disabled={loading}>
-			{loading ? 'Création...' : 'Créer mon compte'}
+			{#if loading}
+				<Loader size="sm" />
+				{m.auth_registering()}
+			{:else}
+				{m.auth_registerButton()}
+			{/if}
 		</Button>
 
 		<p class="form-footer">
-			Déjà un compte ?
-			<a href="/auth/login">Se connecter</a>
+			{m.auth_hasAccount()}
+			<a href="/auth/login">{m.auth_loginButton()}</a>
 		</p>
 	</form>
 </Card>
@@ -140,15 +146,6 @@
 		font-weight: 500;
 		text-align: center;
 		margin-bottom: var(--space-2);
-	}
-
-	.error-message {
-		padding: var(--space-3);
-		background: rgba(255, 51, 51, 0.1);
-		border: 1px solid var(--color-error);
-		border-radius: var(--radius-sm);
-		color: var(--color-error);
-		font-size: var(--text-sm);
 	}
 
 	.input-group {
