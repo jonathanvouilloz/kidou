@@ -46,25 +46,40 @@
 		isTypingComplete = false;
 		hasStarted = false;
 		let charIndex = 0;
-		let timeoutId: ReturnType<typeof setTimeout>;
+		let animationId: number;
+		let delayTimeoutId: ReturnType<typeof setTimeout>;
+		let lastCharTime = 0;
 
-		const typeNextChar = () => {
-			if (charIndex < text.length) {
+		// Use requestAnimationFrame instead of setTimeout per character
+		const animate$ = (timestamp: number) => {
+			if (!lastCharTime) lastCharTime = timestamp;
+
+			const elapsed = timestamp - lastCharTime;
+			const charInterval = typingSpeed + (Math.random() * 20 - 10);
+
+			if (elapsed >= charInterval && charIndex < text.length) {
 				displayedText = text.slice(0, charIndex + 1);
 				charIndex++;
-				const variance = Math.random() * 20 - 10;
-				timeoutId = setTimeout(typeNextChar, typingSpeed + variance);
+				lastCharTime = timestamp;
+			}
+
+			if (charIndex < text.length) {
+				animationId = requestAnimationFrame(animate$);
 			} else {
 				isTypingComplete = true;
 			}
 		};
 
-		timeoutId = setTimeout(() => {
+		// Start after initial delay
+		delayTimeoutId = setTimeout(() => {
 			hasStarted = true;
-			typeNextChar();
+			animationId = requestAnimationFrame(animate$);
 		}, delay);
 
-		return () => clearTimeout(timeoutId);
+		return () => {
+			clearTimeout(delayTimeoutId);
+			cancelAnimationFrame(animationId);
+		};
 	});
 </script>
 

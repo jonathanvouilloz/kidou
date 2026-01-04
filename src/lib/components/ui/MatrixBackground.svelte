@@ -26,7 +26,25 @@
 			drops[x] = Math.random() * -100;
 		}
 
-		const draw = () => {
+		// RAF-based animation with frame limiting (~20fps = 50ms interval)
+		let animationId: number;
+		let lastFrameTime = 0;
+		const frameInterval = 50; // ms between frames
+		let isPaused = false;
+
+		const draw = (timestamp: number) => {
+			if (isPaused) {
+				animationId = requestAnimationFrame(draw);
+				return;
+			}
+
+			// Throttle to ~20fps
+			if (timestamp - lastFrameTime < frameInterval) {
+				animationId = requestAnimationFrame(draw);
+				return;
+			}
+			lastFrameTime = timestamp;
+
 			// Reset shadow avant le fade
 			ctx.shadowBlur = 0;
 			ctx.shadowColor = 'transparent';
@@ -65,33 +83,48 @@
 			// Reset shadow à la fin
 			ctx.shadowBlur = 0;
 			ctx.shadowColor = 'transparent';
+
+			animationId = requestAnimationFrame(draw);
 		};
 
-		// Animation à ~20fps
-		const interval = setInterval(draw, 50);
+		// Start animation
+		animationId = requestAnimationFrame(draw);
 
+		// Pause when page is hidden
+		const handleVisibilityChange = () => {
+			isPaused = document.hidden;
+		};
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+
+		// Debounced resize handler
+		let resizeTimeout: ReturnType<typeof setTimeout>;
 		const handleResize = () => {
-			width = window.innerWidth;
-			height = window.innerHeight;
-			canvas.width = width;
-			canvas.height = height;
-			columns = Math.floor(width / fontSize);
+			clearTimeout(resizeTimeout);
+			resizeTimeout = setTimeout(() => {
+				width = window.innerWidth;
+				height = window.innerHeight;
+				canvas.width = width;
+				canvas.height = height;
+				columns = Math.floor(width / fontSize);
 
-			// Recalculer les drops si le nombre de colonnes change
-			if (drops.length !== columns) {
-				const newDrops: number[] = [];
-				for (let x = 0; x < columns; x++) {
-					newDrops[x] = drops[x] ?? Math.random() * -100;
+				// Recalculer les drops si le nombre de colonnes change
+				if (drops.length !== columns) {
+					const newDrops: number[] = [];
+					for (let x = 0; x < columns; x++) {
+						newDrops[x] = drops[x] ?? Math.random() * -100;
+					}
+					drops = newDrops;
 				}
-				drops = newDrops;
-			}
+			}, 150);
 		};
 
 		window.addEventListener('resize', handleResize);
 
 		return () => {
-			clearInterval(interval);
+			cancelAnimationFrame(animationId);
+			clearTimeout(resizeTimeout);
 			window.removeEventListener('resize', handleResize);
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
 		};
 	});
 </script>

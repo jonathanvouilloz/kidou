@@ -17,7 +17,7 @@
 	function startEdit() {
 		inputValue = value;
 		editing = true;
-		setTimeout(() => inputEl?.focus(), 0);
+		queueMicrotask(() => inputEl?.focus());
 	}
 
 	function cancelEdit() {

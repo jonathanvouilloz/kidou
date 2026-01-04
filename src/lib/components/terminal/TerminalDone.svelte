@@ -48,6 +48,26 @@
 			0 0 20px rgba(0, 255, 65, 0.5);
 	}
 
+	/* Glow overlay for pulse effect (opacity animation instead of text-shadow) */
+	.done-container::after {
+		content: '';
+		position: absolute;
+		inset: -10px;
+		background: radial-gradient(ellipse at center, rgba(0, 255, 65, 0.15) 0%, transparent 70%);
+		opacity: 0;
+		pointer-events: none;
+		will-change: opacity;
+	}
+
+	.terminal-done.animate .done-container::after {
+		animation: glow-pulse-overlay 2s ease-in-out 0.6s infinite;
+	}
+
+	@keyframes glow-pulse-overlay {
+		0%, 100% { opacity: 0; }
+		50% { opacity: 1; }
+	}
+
 	.done-glitch {
 		position: absolute;
 		top: 0;
@@ -57,9 +77,7 @@
 	}
 
 	.terminal-done.animate .done-main {
-		animation:
-			done-enter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1),
-			done-glow-pulse 2s ease-in-out 0.6s infinite;
+		animation: done-enter 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
 	}
 
 	@keyframes done-enter {
@@ -74,21 +92,6 @@
 		100% {
 			opacity: 1;
 			transform: translateY(0) scale(1);
-		}
-	}
-
-	@keyframes done-glow-pulse {
-		0%, 100% {
-			text-shadow:
-				0 0 5px var(--color-success),
-				0 0 10px var(--color-success),
-				0 0 20px rgba(0, 255, 65, 0.5);
-		}
-		50% {
-			text-shadow:
-				0 0 10px var(--color-success),
-				0 0 20px var(--color-success),
-				0 0 40px rgba(0, 255, 65, 0.7);
 		}
 	}
 
@@ -132,7 +135,8 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.terminal-done.animate .done-main {
+		.terminal-done.animate .done-main,
+		.terminal-done.animate .done-container::after {
 			animation: none;
 			opacity: 1;
 		}

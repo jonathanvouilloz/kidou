@@ -40,6 +40,7 @@
 	let toastMessage = $state('');
 	let toastType = $state<'success' | 'error' | 'info'>('info');
 	let toastVisible = $state(false);
+	let toastTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
 	// Accordion state
 	let detailsOpen = $state(false);
@@ -51,11 +52,17 @@
 	});
 
 	function showToast(message: string, type: 'success' | 'error' | 'info') {
+		// Clear previous timeout to avoid orphaned timeouts
+		if (toastTimeoutId) clearTimeout(toastTimeoutId);
+
 		toastMessage = message;
 		toastType = type;
 		toastVisible = true;
 		const timeout = type === 'error' ? 5000 : 3000;
-		setTimeout(() => (toastVisible = false), timeout);
+		toastTimeoutId = setTimeout(() => {
+			toastVisible = false;
+			toastTimeoutId = null;
+		}, timeout);
 	}
 
 	// Toggle is now instant (local only)

@@ -14,16 +14,17 @@
 	let selectedStatus = $state<'all' | 'done' | 'building' | 'waiting'>('all');
 	let selectedDate = $state('all');
 
-	// Extract unique year-month combinations from projects
+	// Extract unique year-month combinations from projects (uses pre-computed dateKey)
+	const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 	const availableDates = $derived(() => {
 		const dateMap = new Map<string, string>();
-		const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
 		for (const project of data.projects) {
-			const date = new Date(project.createdAt);
-			const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-			const label = `${months[date.getMonth()]} ${date.getFullYear()}`;
-			dateMap.set(value, label);
+			if (!dateMap.has(project.dateKey)) {
+				const [year, month] = project.dateKey.split('-');
+				const label = `${months[parseInt(month) - 1]} ${year}`;
+				dateMap.set(project.dateKey, label);
+			}
 		}
 
 		return Array.from(dateMap.entries())
@@ -31,6 +32,7 @@
 			.map(([value, label]) => ({ value, label }));
 	});
 
+	// Optimized filtering using pre-computed dateKey
 	let filteredProjects = $derived(
 		data.projects.filter((p) => {
 			// Status filter
@@ -40,12 +42,8 @@
 				if (selectedStatus === 'waiting' && p.progress !== 0) return false;
 			}
 
-			// Date filter
-			if (selectedDate !== 'all') {
-				const date = new Date(p.createdAt);
-				const projectDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
-				if (projectDate !== selectedDate) return false;
-			}
+			// Date filter (uses pre-computed dateKey - no Date parsing)
+			if (selectedDate !== 'all' && p.dateKey !== selectedDate) return false;
 
 			return true;
 		})

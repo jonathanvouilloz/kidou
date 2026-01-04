@@ -36,7 +36,7 @@
 
 	<div class="project-progress">
 		<div class="progress-bar">
-			<div class="progress-fill" style="width: {progress}%"></div>
+			<div class="progress-fill" style="transform: scaleX({progress / 100})"></div>
 		</div>
 		<span class="progress-text">{completedCount}/{totalCount}</span>
 	</div>
@@ -93,9 +93,12 @@
 	}
 
 	.progress-fill {
+		width: 100%;
 		height: 100%;
 		background: var(--color-accent);
-		transition: width var(--transition-normal);
+		transform-origin: left;
+		transition: transform var(--transition-normal);
+		will-change: transform;
 	}
 
 	.progress-text {

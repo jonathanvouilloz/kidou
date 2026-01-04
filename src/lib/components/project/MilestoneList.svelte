@@ -24,7 +24,7 @@
 	function startAdding() {
 		adding = true;
 		newTitle = '';
-		setTimeout(() => inputEl?.focus(), 0);
+		queueMicrotask(() => inputEl?.focus());
 	}
 
 	function cancelAdding() {

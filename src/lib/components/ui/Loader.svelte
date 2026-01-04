@@ -23,6 +23,7 @@
 		border-radius: 50%;
 		background: var(--color-accent);
 		animation: pulse 1.4s ease-in-out infinite;
+		will-change: transform, opacity;
 	}
 
 	.loader-dot:nth-child(1) {
@@ -64,5 +65,12 @@
 	.loader-lg .loader-dot {
 		width: 8px;
 		height: 8px;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.loader-dot {
+			animation: none;
+			opacity: 1;
+		}
 	}
 </style>
