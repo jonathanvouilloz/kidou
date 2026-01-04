@@ -43,17 +43,10 @@
 	const processingIndex = $derived(
 		milestones.findIndex((m, i) => !m.isCompleted && (i === 0 || milestones[i - 1].isCompleted))
 	);
-
-	// Show overlay state
-	let showOverlay = $state(true);
-
-	function viewLogs() {
-		showOverlay = false;
-	}
 </script>
 
 <a {href} class="terminal-link">
-	<div class="terminal-window state-{state}" class:show-overlay={isCompleted && showOverlay}>
+	<div class="terminal-window state-{state}">
 		<div class="terminal-header">
 			<div class="dots">
 				<span class="dot"></span>
@@ -95,11 +88,8 @@
 			{/if}
 		</div>
 
-		{#if isCompleted && showOverlay}
-			<div class="overlay-done">
-				<div class="overlay-title">DONE</div>
-				<button class="overlay-btn" onclick={(e) => { e.preventDefault(); viewLogs(); }}>[ VIEW LOGS ]</button>
-			</div>
+		{#if isCompleted}
+			<div class="badge-done">DONE</div>
 		{/if}
 
 		<div class="terminal-footer">
@@ -122,7 +112,7 @@
 		text-decoration: none;
 		color: inherit;
 		width: 100%;
-		max-width: 500px;
+		max-width: 420px;
 	}
 
 	.terminal-window {
@@ -131,7 +121,7 @@
 		--c-done: #00ff41;
 
 		width: 100%;
-		height: 380px;
+		height: 340px;
 		background-color: var(--color-bg);
 		border: 1px solid var(--color-border);
 		border-radius: 8px;
@@ -147,6 +137,15 @@
 	.terminal-window:hover {
 		border-color: #555;
 		transform: translateY(-2px);
+	}
+
+	.state-done {
+		border-color: var(--c-done);
+		box-shadow: 0 0 20px rgba(0, 255, 65, 0.15), 0 15px 40px rgba(0, 0, 0, 0.6);
+	}
+
+	.state-done:hover {
+		border-color: var(--c-done);
 	}
 
 	/* Header */
@@ -316,49 +315,19 @@
 		color: #fff;
 	}
 
-	/* Overlay */
-	.overlay-done {
+	/* Badge Done */
+	.badge-done {
 		position: absolute;
-		top: 50%;
-		left: 50%;
-		transform: translate(-50%, -50%);
-		background: rgba(10, 10, 10, 0.9);
-		backdrop-filter: blur(4px);
-		border: 1px solid var(--c-done);
-		padding: 20px 40px;
-		text-align: center;
-		z-index: 10;
-		box-shadow: 0 0 30px rgba(0, 255, 65, 0.15);
-		display: none;
-	}
-
-	.show-overlay .overlay-done {
-		display: block;
-	}
-
-	.overlay-title {
-		font-size: 32px;
-		color: var(--c-done);
-		margin: 0;
-		font-weight: 900;
-		letter-spacing: 2px;
-	}
-
-	.overlay-btn {
-		margin-top: 10px;
-		background: none;
-		border: 1px solid #444;
-		color: #888;
-		font-family: inherit;
-		font-size: 10px;
-		cursor: pointer;
+		top: 44px;
+		right: 12px;
 		padding: 4px 10px;
-		transition: all 0.2s;
-	}
-
-	.overlay-btn:hover {
-		border-color: var(--c-done);
+		font-size: 10px;
+		font-weight: 700;
+		letter-spacing: 1px;
+		background: rgba(0, 255, 65, 0.15);
 		color: var(--c-done);
+		border-radius: 4px;
+		border: 1px solid rgba(0, 255, 65, 0.3);
 	}
 
 	/* Animations */

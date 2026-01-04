@@ -1,0 +1,154 @@
+<script lang="ts">
+	import FilterBar from '$lib/components/ui/FilterBar.svelte';
+	import TerminalCard from '$lib/components/project/TerminalCard.svelte';
+	import * as m from '$lib/paraglide/messages';
+
+	let { data } = $props();
+
+	let selectedStatus = $state<'all' | 'done' | 'building' | 'waiting'>('all');
+
+	let filteredProjects = $derived(
+		data.projects.filter((p) => {
+			if (selectedStatus === 'all') return true;
+			if (selectedStatus === 'done') return p.progress === 100;
+			if (selectedStatus === 'building') return p.progress > 0 && p.progress < 100;
+			if (selectedStatus === 'waiting') return p.progress === 0;
+			return true;
+		})
+	);
+</script>
+
+<svelte:head>
+	<title>{m.community_metaTitle()}</title>
+	<meta name="description" content="{m.community_metaDescription()}" />
+	<meta property="og:title" content="{m.community_metaTitle()}" />
+	<meta property="og:description" content="{m.community_metaDescription()}" />
+	<meta property="og:type" content="website" />
+</svelte:head>
+
+<main class="community-page">
+	<div class="container">
+		<header class="page-header">
+			<h1 class="page-title">{m.community_title()}</h1>
+			<p class="page-subtitle">{m.community_subtitle()}</p>
+		</header>
+
+		<FilterBar {selectedStatus} onchange={(s) => (selectedStatus = s)} />
+
+		{#if filteredProjects.length === 0}
+			<div class="empty-state">
+				<p>NO_PROJECTS_FOUND</p>
+				<p class="empty-hint">{m.community_noProjects()}</p>
+			</div>
+		{:else}
+			<div class="terminals-grid">
+				{#each filteredProjects as project (project.id)}
+					<TerminalCard
+						name={project.name}
+						slug={project.slug}
+						username={project.owner.username}
+						progress={project.progress}
+						milestones={project.milestones}
+						deadline={project.deadline}
+						isCompleted={project.isCompleted ?? false}
+					/>
+				{/each}
+			</div>
+		{/if}
+	</div>
+</main>
+
+<style>
+	.community-page {
+		padding: var(--space-8) var(--space-4);
+		min-height: 100vh;
+	}
+
+	.container {
+		max-width: 1400px;
+		margin: 0 auto;
+	}
+
+	.page-header {
+		text-align: center;
+		margin-bottom: var(--space-8);
+		padding-bottom: var(--space-6);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	.page-title {
+		font-size: 42px;
+		font-weight: 800;
+		margin: 0 0 var(--space-2);
+		text-transform: uppercase;
+		letter-spacing: -1px;
+		text-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+	}
+
+	.page-subtitle {
+		color: var(--color-text-muted);
+		font-size: var(--text-base);
+		margin: 0;
+	}
+
+	.terminals-grid {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 24px;
+		justify-items: center;
+	}
+
+	@media (max-width: 1024px) {
+		.terminals-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.terminals-grid {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	.empty-state {
+		text-align: center;
+		padding: var(--space-12);
+		color: var(--color-text-muted);
+		border: 1px dashed var(--color-border);
+		border-radius: var(--radius-md);
+	}
+
+	.empty-state p {
+		margin: 0;
+	}
+
+	.empty-state p:first-child {
+		font-size: var(--text-xl);
+		color: #444;
+		margin-bottom: var(--space-2);
+	}
+
+	.empty-hint {
+		font-size: var(--text-sm);
+	}
+
+	@media (max-width: 768px) {
+		.community-page {
+			padding: var(--space-6) var(--space-3);
+		}
+
+		.page-title {
+			font-size: 28px;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.community-page {
+			padding: var(--space-4) var(--space-3);
+		}
+
+		.page-title {
+			font-size: 22px;
+		}
+	}
+</style>
