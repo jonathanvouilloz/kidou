@@ -1,4 +1,5 @@
 <script lang="ts">
+	import FilterBar from '$lib/components/ui/FilterBar.svelte';
 	import TerminalCard from '$lib/components/project/TerminalCard.svelte';
 	import * as m from '$lib/paraglide/messages';
 
@@ -7,6 +8,47 @@
 	// Format username for display (replace spaces with underscores)
 	const displayName = $derived(
 		(data.profileUser.name || data.profileUser.username).replace(/\s+/g, '_').toUpperCase()
+	);
+
+	// Filter states
+	let selectedStatus = $state<'all' | 'done' | 'building' | 'waiting'>('all');
+	let selectedDate = $state('all');
+
+	// Extract unique year-month combinations from projects
+	const availableDates = $derived(() => {
+		const dateMap = new Map<string, string>();
+		const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+		for (const project of data.projects) {
+			const date = new Date(project.createdAt);
+			const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+			const label = `${months[date.getMonth()]} ${date.getFullYear()}`;
+			dateMap.set(value, label);
+		}
+
+		return Array.from(dateMap.entries())
+			.sort((a, b) => b[0].localeCompare(a[0]))
+			.map(([value, label]) => ({ value, label }));
+	});
+
+	let filteredProjects = $derived(
+		data.projects.filter((p) => {
+			// Status filter
+			if (selectedStatus !== 'all') {
+				if (selectedStatus === 'done' && p.progress !== 100) return false;
+				if (selectedStatus === 'building' && (p.progress <= 0 || p.progress >= 100)) return false;
+				if (selectedStatus === 'waiting' && p.progress !== 0) return false;
+			}
+
+			// Date filter
+			if (selectedDate !== 'all') {
+				const date = new Date(p.createdAt);
+				const projectDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+				if (projectDate !== selectedDate) return false;
+			}
+
+			return true;
+		})
 	);
 </script>
 
@@ -53,17 +95,23 @@
 			</div>
 		</header>
 
+		<FilterBar
+			{selectedStatus}
+			onchange={(s) => (selectedStatus = s)}
+			availableDates={availableDates()}
+			{selectedDate}
+			ondatechange={(d) => (selectedDate = d)}
+		/>
+
 		<!-- Public projects list -->
 		<section class="projects-section">
-			<h2 class="section-title">{m.publicProfile_publicProjects()}</h2>
-
-			{#if data.projects.length === 0}
+			{#if filteredProjects.length === 0}
 				<div class="empty-state">
 					<p>{m.publicProfile_noProjects()}</p>
 				</div>
 			{:else}
 				<div class="terminals-grid">
-					{#each data.projects as project (project.id)}
+					{#each filteredProjects as project (project.id)}
 						<TerminalCard
 							name={project.name}
 							slug={project.slug}
@@ -88,7 +136,7 @@
 
 	.container {
 		width: 100%;
-		max-width: 1200px;
+		max-width: 1400px;
 		margin: 0 auto;
 	}
 
@@ -181,10 +229,22 @@
 	}
 
 	.terminals-grid {
-		display: flex;
-		flex-wrap: wrap;
-		justify-content: center;
-		gap: 40px;
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		gap: 24px;
+		justify-items: center;
+	}
+
+	@media (max-width: 1024px) {
+		.terminals-grid {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+
+	@media (max-width: 640px) {
+		.terminals-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	.empty-state {
@@ -208,10 +268,6 @@
 			flex-direction: column;
 			align-items: flex-start;
 			gap: 15px;
-		}
-
-		.terminals-grid {
-			gap: 24px;
 		}
 	}
 

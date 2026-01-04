@@ -56,40 +56,52 @@
 
 		<!-- Desktop nav -->
 		<nav class="nav desktop-nav">
-			<a href="/community" class="nav-link">{m.nav_explore()}</a>
-			{#if user}
-				<a href="/dashboard" class="nav-link">{m.nav_dashboard()}</a>
-				<div class="user-menu">
-					<button
-						class="user-button"
-						onclick={(e) => {
-							e.stopPropagation();
-							toggleMenu();
-						}}
-					>
-						{#if user.avatarUrl}
-							<img src={user.avatarUrl} alt={user.username} class="user-avatar" />
-						{:else}
-							<span class="user-initial">{user.username[0].toUpperCase()}</span>
-						{/if}
-						<span class="user-name">{user.username}</span>
-					</button>
+			<div class="nav-left"></div>
 
-					{#if menuOpen}
-						<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-						<div class="dropdown" onclick={(e) => e.stopPropagation()}>
-							<a href="/{user.username}" class="dropdown-item">{m.nav_myProfile()}</a>
-							<a href="/settings" class="dropdown-item">{m.nav_settings()}</a>
-							<button class="dropdown-item" onclick={handleLogout}>{m.nav_logout()}</button>
-						</div>
-					{/if}
-				</div>
-			{:else}
-				<a href="/auth/login" class="nav-link">{m.nav_login()}</a>
-				<Button variant="primary" size="sm" onclick={() => goto('/auth/register')}>
-					{m.nav_register()}
-				</Button>
-			{/if}
+			<div class="nav-center">
+				<a href="/community" class="nav-link">{m.nav_explore()}</a>
+				{#if user}
+					<a href="/dashboard" class="nav-link">{m.nav_dashboard()}</a>
+					<a href="/{user.username}" class="nav-link">My Page</a>
+				{/if}
+			</div>
+
+			<div class="nav-right">
+				{#if user}
+					<Button variant="ghost" size="sm" onclick={() => goto('/project/new')}>
+						Init project
+					</Button>
+					<div class="user-menu">
+						<button
+							class="user-button"
+							onclick={(e) => {
+								e.stopPropagation();
+								toggleMenu();
+							}}
+						>
+							{#if user.avatarUrl}
+								<img src={user.avatarUrl} alt={user.username} class="user-avatar" />
+							{:else}
+								<span class="user-initial">{user.username[0].toUpperCase()}</span>
+							{/if}
+							<span class="user-name">{user.username}</span>
+						</button>
+
+						{#if menuOpen}
+							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+							<div class="dropdown" onclick={(e) => e.stopPropagation()}>
+								<a href="/settings" class="dropdown-item">{m.nav_settings()}</a>
+								<button class="dropdown-item" onclick={handleLogout}>{m.nav_logout()}</button>
+							</div>
+						{/if}
+					</div>
+				{:else}
+					<a href="/auth/login" class="nav-link">{m.nav_login()}</a>
+					<Button variant="primary" size="sm" onclick={() => goto('/auth/register')}>
+						{m.nav_register()}
+					</Button>
+				{/if}
+			</div>
 		</nav>
 
 		<!-- Mobile hamburger -->
@@ -113,7 +125,8 @@
 			<a href="/community" class="mobile-link" onclick={closeMobileMenu}>{m.nav_explore()}</a>
 			{#if user}
 				<a href="/dashboard" class="mobile-link" onclick={closeMobileMenu}>{m.nav_dashboard()}</a>
-				<a href="/{user.username}" class="mobile-link" onclick={closeMobileMenu}>{m.nav_myProfile()}</a>
+				<a href="/{user.username}" class="mobile-link" onclick={closeMobileMenu}>My Page</a>
+				<a href="/project/new" class="mobile-link" onclick={closeMobileMenu}>Init project</a>
 				<a href="/settings" class="mobile-link" onclick={closeMobileMenu}>{m.nav_settings()}</a>
 				<button class="mobile-link" onclick={handleLogout}>{m.nav_logout()}</button>
 			{:else}
@@ -163,6 +176,25 @@
 	.nav {
 		display: flex;
 		align-items: center;
+		flex: 1;
+	}
+
+	.nav-left {
+		flex: 1;
+	}
+
+	.nav-center {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--space-6);
+	}
+
+	.nav-right {
+		flex: 1;
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
 		gap: var(--space-4);
 	}
 

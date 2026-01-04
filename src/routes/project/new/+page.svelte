@@ -8,6 +8,8 @@
 	import EditableMilestoneList from '$lib/components/project/EditableMilestoneList.svelte';
 	import * as m from '$lib/paraglide/messages';
 
+	let { data } = $props();
+
 	interface Milestone {
 		id: string;
 		title: string;
@@ -187,7 +189,24 @@
 
 <main class="new-project">
 	<div class="container">
-		{#if step === 1}
+		{#if !data.canCreateProject}
+			<div class="limit-reached">
+				<div class="limit-icon">⚠️</div>
+				<h1>Project limit reached</h1>
+				<p class="limit-message">
+					You've reached the limit of <strong>{data.projectCount}/{data.maxProjects}</strong> projects
+					on the {data.userPlan === 'free' ? 'Free' : 'Pro'} plan.
+				</p>
+				<div class="limit-actions">
+					<Button variant="primary" onclick={() => goto('/settings')}>
+						Upgrade to Pro
+					</Button>
+					<Button variant="ghost" onclick={() => goto('/dashboard')}>
+						← Dashboard
+					</Button>
+				</div>
+			</div>
+		{:else if step === 1}
 			<header class="page-header">
 				<h1>{m.project_newTitle()}</h1>
 				<p class="subtitle">{m.project_newSubtitle()}</p>
@@ -432,5 +451,43 @@
 		.new-project {
 			padding: var(--space-4) var(--space-3);
 		}
+	}
+
+	/* Limit reached block */
+	.limit-reached {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		padding: var(--space-12) var(--space-4);
+		min-height: 50vh;
+	}
+
+	.limit-icon {
+		font-size: 3rem;
+		margin-bottom: var(--space-4);
+	}
+
+	.limit-reached h1 {
+		font-size: var(--text-2xl);
+		font-weight: 500;
+		margin-bottom: var(--space-3);
+	}
+
+	.limit-message {
+		color: var(--color-text-secondary);
+		font-size: var(--text-base);
+		margin-bottom: var(--space-6);
+		max-width: 400px;
+	}
+
+	.limit-message strong {
+		color: var(--color-text);
+	}
+
+	.limit-actions {
+		display: flex;
+		gap: var(--space-3);
 	}
 </style>
