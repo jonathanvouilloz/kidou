@@ -6,13 +6,41 @@
 	let { data } = $props();
 
 	let selectedStatus = $state<'all' | 'done' | 'building' | 'waiting'>('all');
+	let selectedDate = $state('all');
+
+	// Extract unique year-month combinations from projects
+	const availableDates = $derived(() => {
+		const dateMap = new Map<string, string>();
+		const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+		for (const project of data.projects) {
+			const date = new Date(project.createdAt);
+			const value = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+			const label = `${months[date.getMonth()]} ${date.getFullYear()}`;
+			dateMap.set(value, label);
+		}
+
+		return Array.from(dateMap.entries())
+			.sort((a, b) => b[0].localeCompare(a[0])) // Most recent first
+			.map(([value, label]) => ({ value, label }));
+	});
 
 	let filteredProjects = $derived(
 		data.projects.filter((p) => {
-			if (selectedStatus === 'all') return true;
-			if (selectedStatus === 'done') return p.progress === 100;
-			if (selectedStatus === 'building') return p.progress > 0 && p.progress < 100;
-			if (selectedStatus === 'waiting') return p.progress === 0;
+			// Status filter
+			if (selectedStatus !== 'all') {
+				if (selectedStatus === 'done' && p.progress !== 100) return false;
+				if (selectedStatus === 'building' && (p.progress <= 0 || p.progress >= 100)) return false;
+				if (selectedStatus === 'waiting' && p.progress !== 0) return false;
+			}
+
+			// Date filter
+			if (selectedDate !== 'all') {
+				const date = new Date(p.createdAt);
+				const projectDate = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+				if (projectDate !== selectedDate) return false;
+			}
+
 			return true;
 		})
 	);
@@ -33,7 +61,13 @@
 			<p class="page-subtitle">{m.community_subtitle()}</p>
 		</header>
 
-		<FilterBar {selectedStatus} onchange={(s) => (selectedStatus = s)} />
+		<FilterBar
+			{selectedStatus}
+			onchange={(s) => (selectedStatus = s)}
+			availableDates={availableDates()}
+			{selectedDate}
+			ondatechange={(d) => (selectedDate = d)}
+		/>
 
 		{#if filteredProjects.length === 0}
 			<div class="empty-state">
