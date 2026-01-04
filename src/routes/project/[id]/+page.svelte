@@ -34,6 +34,7 @@
 
 	// Saving state
 	let saving = $state(false);
+	let deleting = $state(false);
 
 	// Toast state
 	let toastMessage = $state('');
@@ -189,6 +190,33 @@
 	const publicUrl = $derived(
 		data.project.isPublic ? `/${data.user.username}/${data.project.slug}` : undefined
 	);
+
+	// Delete project
+	async function handleDelete() {
+		if (!confirm('Are you sure you want to delete this project? This action cannot be undone.')) {
+			return;
+		}
+
+		deleting = true;
+
+		try {
+			const res = await fetch(`/api/projects/${data.project.id}`, {
+				method: 'DELETE'
+			});
+
+			if (!res.ok) {
+				const err = await res.json();
+				showToast(err.message || 'Error deleting project', 'error');
+				return;
+			}
+
+			await goto('/dashboard');
+		} catch {
+			showToast('Error deleting project', 'error');
+		} finally {
+			deleting = false;
+		}
+	}
 </script>
 
 <svelte:head>
@@ -262,6 +290,12 @@
 		<section class="milestones-section">
 			<h2 class="section-title">{m.projectView_milestones()}</h2>
 			<MilestoneList {milestones} onToggle={handleToggle} onAdd={handleAddMilestone} />
+
+			<div class="project-actions-row">
+				<Button variant="danger" size="sm" onclick={handleDelete} disabled={deleting}>
+					{deleting ? 'Deleting...' : 'Delete project'}
+				</Button>
+			</div>
 
 			{#if hasChanges}
 				<div class="actions-bar">
@@ -369,6 +403,12 @@
 		font-weight: 500;
 		margin-bottom: var(--space-4);
 		color: var(--color-text-secondary);
+	}
+
+	.project-actions-row {
+		display: flex;
+		justify-content: flex-end;
+		margin-top: var(--space-4);
 	}
 
 	.actions-bar {

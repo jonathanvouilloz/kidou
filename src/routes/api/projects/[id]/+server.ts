@@ -92,3 +92,34 @@ export const PATCH: RequestHandler = async ({ params, request, locals }) => {
 		throw error(500, { message: 'Erreur lors de la mise à jour' });
 	}
 };
+
+export const DELETE: RequestHandler = async ({ params, locals }) => {
+	if (!locals.user) {
+		throw error(401, { message: 'Non autorisé' });
+	}
+
+	const projectId = params.id;
+
+	// Verify project exists and belongs to user
+	const [project] = await db
+		.select({ id: projects.id, userId: projects.userId })
+		.from(projects)
+		.where(eq(projects.id, projectId))
+		.limit(1);
+
+	if (!project) {
+		throw error(404, { message: 'Projet non trouvé' });
+	}
+
+	if (project.userId !== locals.user.id) {
+		throw error(403, { message: 'Accès refusé' });
+	}
+
+	try {
+		await db.delete(projects).where(eq(projects.id, projectId));
+
+		return json({ success: true });
+	} catch {
+		throw error(500, { message: 'Erreur lors de la suppression' });
+	}
+};
