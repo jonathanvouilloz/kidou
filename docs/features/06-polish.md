@@ -8,25 +8,26 @@ Finitions, animations, responsive, et déploiement.
 
 ### Animations terminal
 
-- [ ] Curseur clignotant
-- [ ] Lignes qui s'affichent progressivement (typing effect)
-- [ ] Transition sur checkbox toggle
-- [ ] Animation "DONE" (apparition progressive)
-- [ ] Barre de progression animée
+- [x] Curseur clignotant
+- [x] Lignes qui s'affichent progressivement (typing effect)
+- [x] Transition sur checkbox toggle (bounce + glow)
+- [x] Animation "DONE" (bounce + glow pulse + glitch)
+- [x] Barre de progression animée (shimmer + tip glow)
 
 ### Responsive
 
-- [ ] Mobile : navigation hamburger
-- [ ] Mobile : terminal adapté (police plus petite)
-- [ ] Tablet : layout intermédiaire
+- [x] Mobile : navigation hamburger
+- [x] Mobile : terminal adapté (police plus petite)
+- [x] Tablet : layout intermédiaire
+- [x] Ajustements padding/espacement mobile
 - [ ] Tester sur différentes tailles d'écran
 
 ### Gestion erreurs
 
-- [ ] Pages 404 et 500 personnalisées
+- [x] Pages 404 et 500 personnalisées
 - [ ] Toast pour erreurs API
-- [ ] États empty (pas de projets, pas de milestones)
-- [ ] États loading partout
+- [x] États empty (pas de projets, pas de milestones)
+- [x] États loading (formulaires, toggles)
 
 ### Limite projets
 

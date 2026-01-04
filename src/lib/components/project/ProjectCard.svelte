@@ -112,4 +112,14 @@
 		color: var(--color-text-secondary);
 		font-size: var(--text-sm);
 	}
+
+	@media (max-width: 480px) {
+		.project-card {
+			padding: var(--space-3);
+		}
+
+		.project-name {
+			font-size: var(--text-base);
+		}
+	}
 </style>

@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
-import { users, projects } from '$lib/server/db/schema';
-import { eq, and, sql } from 'drizzle-orm';
+import { users, projects, milestones } from '$lib/server/db/schema';
+import { eq, and, asc } from 'drizzle-orm';
 
 export const load: PageServerLoad = async ({ params }) => {
 	// Chercher l'utilisateur par username
@@ -22,40 +22,49 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(404, { message: 'Utilisateur non trouvé' });
 	}
 
-	// Charger les projets publics avec progression
+	// Charger les projets publics
 	const publicProjects = await db
 		.select({
 			id: projects.id,
 			name: projects.name,
 			slug: projects.slug,
+			deadline: projects.deadline,
 			isCompleted: projects.isCompleted,
-			createdAt: projects.createdAt,
-			totalMilestones: sql<number>`(
-				SELECT COUNT(*) FROM milestones
-				WHERE milestones.project_id = projects.id
-			)`,
-			completedMilestones: sql<number>`(
-				SELECT COUNT(*) FROM milestones
-				WHERE milestones.project_id = projects.id
-				AND milestones.is_completed = true
-			)`
+			createdAt: projects.createdAt
 		})
 		.from(projects)
 		.where(and(eq(projects.userId, user[0].id), eq(projects.isPublic, true)))
 		.orderBy(projects.createdAt);
 
-	const projectsWithProgress = publicProjects.map((p) => ({
-		...p,
-		totalMilestones: Number(p.totalMilestones) || 0,
-		completedMilestones: Number(p.completedMilestones) || 0,
-		progress:
-			Number(p.totalMilestones) > 0
-				? Math.round((Number(p.completedMilestones) / Number(p.totalMilestones)) * 100)
-				: 0
-	}));
+	// Charger les milestones pour chaque projet
+	const projectsWithMilestones = await Promise.all(
+		publicProjects.map(async (project) => {
+			const projectMilestones = await db
+				.select({
+					id: milestones.id,
+					title: milestones.title,
+					isCompleted: milestones.isCompleted
+				})
+				.from(milestones)
+				.where(eq(milestones.projectId, project.id))
+				.orderBy(asc(milestones.position));
+
+			const totalMilestones = projectMilestones.length;
+			const completedMilestones = projectMilestones.filter((m) => m.isCompleted).length;
+			const progress = totalMilestones > 0 ? Math.round((completedMilestones / totalMilestones) * 100) : 0;
+
+			return {
+				...project,
+				milestones: projectMilestones,
+				totalMilestones,
+				completedMilestones,
+				progress
+			};
+		})
+	);
 
 	return {
 		profileUser: user[0],
-		projects: projectsWithProgress
+		projects: projectsWithMilestones
 	};
 };

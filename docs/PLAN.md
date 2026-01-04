@@ -64,8 +64,8 @@
 ### Phase 6 : Polish & Deploy
 **Fichier détail** : [06-polish.md](./features/06-polish.md)
 
-- [ ] Animations terminal
-- [ ] Responsive
+- [x] Animations terminal
+- [x] Responsive
 - [ ] Gestion erreurs
 - [ ] Limite 3 projets
 - [ ] Deploy Vercel

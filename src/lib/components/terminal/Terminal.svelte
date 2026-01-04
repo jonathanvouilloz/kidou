@@ -33,7 +33,12 @@
 	{#if showProgress}
 		<div class="terminal-footer">
 			<span class="progress-bar" class:complete={progress >= 100}>
-				<span class="progress-fill" style="width: {progress}%"></span>
+				<span class="progress-fill" style="width: {progress}%">
+					<span class="progress-shimmer"></span>
+				</span>
+				{#if progress > 0 && progress < 100}
+					<span class="progress-tip" style="left: {progress}%"></span>
+				{/if}
 			</span>
 			{#if progressText}
 				<span class="progress-text">{progressText}</span>
@@ -99,28 +104,98 @@
 	}
 
 	.progress-bar {
+		position: relative;
 		flex: 1;
 		height: 4px;
 		background: var(--color-border);
 		border-radius: 2px;
-		overflow: hidden;
+		overflow: visible;
 	}
 
 	.progress-fill {
+		position: relative;
 		display: block;
 		height: 100%;
 		background: var(--color-accent);
-		transition: width var(--transition-normal);
+		border-radius: 2px;
+		transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+		overflow: hidden;
+	}
+
+	.progress-shimmer {
+		position: absolute;
+		top: 0;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		background: linear-gradient(
+			90deg,
+			transparent 0%,
+			rgba(255, 255, 255, 0.3) 50%,
+			transparent 100%
+		);
+		animation: shimmer 2s ease-in-out infinite;
+	}
+
+	@keyframes shimmer {
+		0% { transform: translateX(-100%); }
+		100% { transform: translateX(100%); }
+	}
+
+	.progress-tip {
+		position: absolute;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		width: 8px;
+		height: 8px;
+		border-radius: 50%;
+		background: var(--color-accent);
+		box-shadow: 0 0 8px var(--color-accent), 0 0 16px var(--color-accent);
+		animation: tip-pulse 1s ease-in-out infinite;
+	}
+
+	@keyframes tip-pulse {
+		0%, 100% {
+			opacity: 1;
+			box-shadow: 0 0 8px var(--color-accent), 0 0 16px var(--color-accent);
+		}
+		50% {
+			opacity: 0.7;
+			box-shadow: 0 0 4px var(--color-accent), 0 0 8px var(--color-accent);
+		}
 	}
 
 	.progress-bar.complete .progress-fill {
-		animation: pulse 2s ease-in-out infinite;
-		box-shadow: 0 0 8px var(--color-accent);
+		background: var(--color-success);
+		box-shadow: 0 0 8px var(--color-success);
+		animation: complete-glow 2s ease-in-out infinite;
 	}
 
-	@keyframes pulse {
-		0%, 100% { opacity: 1; }
-		50% { opacity: 0.7; }
+	.progress-bar.complete .progress-shimmer {
+		display: none;
+	}
+
+	@keyframes complete-glow {
+		0%, 100% {
+			box-shadow: 0 0 8px var(--color-success), 0 0 16px rgba(0, 255, 65, 0.3);
+		}
+		50% {
+			box-shadow: 0 0 12px var(--color-success), 0 0 24px rgba(0, 255, 65, 0.5);
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.progress-fill {
+			transition: width 0.1s linear;
+		}
+		.progress-shimmer,
+		.progress-tip {
+			animation: none !important;
+			display: none;
+		}
+		.progress-bar.complete .progress-fill {
+			animation: none;
+		}
 	}
 
 	.progress-text {

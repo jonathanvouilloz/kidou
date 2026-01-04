@@ -44,6 +44,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			id: milestones.id,
 			title: milestones.title,
 			isCompleted: milestones.isCompleted,
+			completedAt: milestones.completedAt,
 			position: milestones.position
 		})
 		.from(milestones)

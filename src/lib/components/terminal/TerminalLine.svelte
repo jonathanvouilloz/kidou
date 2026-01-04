@@ -1,24 +1,87 @@
 <script lang="ts">
+	import { browser } from '$app/environment';
+
 	interface Props {
 		lineNumber: number;
 		completed?: boolean;
 		text: string;
 		animate?: boolean;
 		delay?: number;
+		typingSpeed?: number;
 	}
 
-	let { lineNumber, completed = false, text, animate = false, delay = 0 }: Props = $props();
+	let {
+		lineNumber,
+		completed = false,
+		text,
+		animate = false,
+		delay = 0,
+		typingSpeed = 30
+	}: Props = $props();
+
+	let displayedText = $state('');
+	let isTypingComplete = $state(!animate);
+	let hasStarted = $state(false);
+
+	$effect(() => {
+		if (!animate) {
+			displayedText = text;
+			isTypingComplete = true;
+			return;
+		}
+
+		if (!browser) {
+			displayedText = text;
+			isTypingComplete = true;
+			return;
+		}
+
+		if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+			displayedText = text;
+			isTypingComplete = true;
+			return;
+		}
+
+		displayedText = '';
+		isTypingComplete = false;
+		hasStarted = false;
+		let charIndex = 0;
+		let timeoutId: ReturnType<typeof setTimeout>;
+
+		const typeNextChar = () => {
+			if (charIndex < text.length) {
+				displayedText = text.slice(0, charIndex + 1);
+				charIndex++;
+				const variance = Math.random() * 20 - 10;
+				timeoutId = setTimeout(typeNextChar, typingSpeed + variance);
+			} else {
+				isTypingComplete = true;
+			}
+		};
+
+		timeoutId = setTimeout(() => {
+			hasStarted = true;
+			typeNextChar();
+		}, delay);
+
+		return () => clearTimeout(timeoutId);
+	});
 </script>
 
 <div
 	class="terminal-line"
 	class:completed
 	class:animate
-	style={animate ? `--delay: ${delay}ms` : undefined}
+	class:visible={!animate || hasStarted}
 >
 	<span class="line-number">{String(lineNumber).padStart(2, '0')}</span>
 	<span class="line-status">{completed ? '✓' : '○'}</span>
-	<span class="line-text">{text}</span>
+	<span class="line-text">
+		{displayedText}
+		{#if animate && hasStarted && !isTypingComplete}
+			<span class="typing-cursor">|</span>
+		{/if}
+	</span>
 </div>
 
 <style>
@@ -28,33 +91,15 @@
 		padding: var(--space-1) 0;
 		color: var(--color-text-muted);
 		transition: color var(--transition-fast);
+		opacity: 0;
+	}
+
+	.terminal-line.visible {
+		opacity: 1;
 	}
 
 	.terminal-line.completed {
 		color: var(--color-accent);
-	}
-
-	.terminal-line.animate {
-		opacity: 0;
-		animation: fadeIn 0.3s ease forwards;
-		animation-delay: var(--delay);
-	}
-
-	.terminal-line.animate .line-text {
-		overflow: hidden;
-		white-space: nowrap;
-		animation: typing 0.5s steps(20) forwards;
-		animation-delay: var(--delay);
-	}
-
-	@keyframes fadeIn {
-		from { opacity: 0; transform: translateY(4px); }
-		to { opacity: 1; transform: translateY(0); }
-	}
-
-	@keyframes typing {
-		from { max-width: 0; }
-		to { max-width: 100%; }
 	}
 
 	.line-number {
@@ -72,10 +117,21 @@
 
 	.terminal-line.completed .line-status {
 		transform: scale(1.1);
+		text-shadow: 0 0 8px var(--color-success);
 	}
 
 	.line-text {
 		flex: 1;
+	}
+
+	.typing-cursor {
+		animation: cursor-blink 0.5s step-end infinite;
+		color: var(--color-accent);
+		margin-left: 1px;
+	}
+
+	@keyframes cursor-blink {
+		50% { opacity: 0; }
 	}
 
 	/* Mobile responsive */
@@ -91,6 +147,12 @@
 
 		.line-status {
 			width: 1.2em;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.typing-cursor {
+			animation: none;
 		}
 	}
 </style>
