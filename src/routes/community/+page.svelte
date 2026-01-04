@@ -1,5 +1,6 @@
 <script lang="ts">
 	import FilterBar from '$lib/components/ui/FilterBar.svelte';
+	import MatrixBackground from '$lib/components/ui/MatrixBackground.svelte';
 	import TerminalCard from '$lib/components/project/TerminalCard.svelte';
 	import * as m from '$lib/paraglide/messages';
 
@@ -53,6 +54,8 @@
 	<meta property="og:description" content="{m.community_metaDescription()}" />
 	<meta property="og:type" content="website" />
 </svelte:head>
+
+<MatrixBackground />
 
 <main class="community-page">
 	<div class="container">
