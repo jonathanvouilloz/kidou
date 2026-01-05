@@ -1,6 +1,9 @@
 <script lang="ts">
 	let { data } = $props();
 
+	// Active tab state
+	let activeTab = $state<'output' | 'error' | 'commits'>('output');
+
 	// Calculate days since creation
 	const daysSinceCreation = $derived(
 		Math.floor((Date.now() - new Date(data.project.createdAt).getTime()) / (1000 * 60 * 60 * 24))
@@ -72,24 +75,26 @@
 				<div class="code-line">
 					<span class="line-num">02</span>&nbsp;&nbsp;name: <span class="string">"{data.project.name}"</span>,
 				</div>
-				{#if data.project.description}
-					<div class="code-line">
-						<span class="line-num">03</span>&nbsp;&nbsp;desc: <span class="string">"{data.project.description}"</span>,
-					</div>
-				{/if}
 				<div class="code-line">
-					<span class="line-num">{data.project.description ? '04' : '03'}</span>&nbsp;&nbsp;owner: <span class="var">@{data.owner.username}</span>,
-				</div>
-				{#if data.project.stack && data.project.stack.length > 0}
-					<div class="code-line">
-						<span class="line-num">{data.project.description ? '05' : '04'}</span>&nbsp;&nbsp;stack: [<span class="string">{data.project.stack.map(s => `"${s}"`).join(', ')}</span>],
-					</div>
-				{/if}
-				<div class="code-line">
-					<span class="line-num">{data.project.description ? (data.project.stack?.length ? '06' : '05') : (data.project.stack?.length ? '05' : '04')}</span>&nbsp;&nbsp;status: <span class="keyword">{data.project.isCompleted ? 'true' : 'false'}</span>
+					<span class="line-num">03</span>&nbsp;&nbsp;owner: <a href="/{data.owner.username}" class="var owner-link">@{data.owner.username}</a>,
 				</div>
 				<div class="code-line">
-					<span class="line-num">{data.project.description ? (data.project.stack?.length ? '07' : '06') : (data.project.stack?.length ? '06' : '05')}</span>{'}'};
+					<span class="line-num">04</span>&nbsp;&nbsp;stack: {#if data.project.stack?.length}[<span class="string">{data.project.stack.map(s => `"${s}"`).join(', ')}</span>]{:else}<span class="keyword">null</span>{/if},
+				</div>
+				<div class="code-line">
+					<span class="line-num">05</span>&nbsp;&nbsp;started: <span class="string">"{formatDate(data.project.createdAt)}"</span>,
+				</div>
+				<div class="code-line">
+					<span class="line-num">06</span>&nbsp;&nbsp;deadline: {#if data.project.deadline}<span class="string">"{formatDate(data.project.deadline)}"</span>{:else}<span class="keyword">null</span>{/if},
+				</div>
+				<div class="code-line">
+					<span class="line-num">07</span>&nbsp;&nbsp;status: <span class="keyword">{data.project.isCompleted ? 'true' : 'false'}</span>,
+				</div>
+				<div class="code-line code-line-desc">
+					<span class="line-num">08</span>&nbsp;&nbsp;desc: {#if data.project.description}<span class="string desc-value">"{data.project.description}"</span>{:else}<span class="keyword">null</span>{/if}
+				</div>
+				<div class="code-line">
+					<span class="line-num">09</span>{'}'};
 				</div>
 			</div>
 		</div>
@@ -117,6 +122,14 @@
 					<div class="status-light on"></div>
 				</a>
 			{/if}
+
+			<a href="/{data.owner.username}" class="connection-card">
+				<div class="conn-info">
+					<span class="conn-label">Owner</span>
+					<span class="conn-value">USER_PROFILE</span>
+				</div>
+				<span class="owner-username">@{data.owner.username}</span>
+			</a>
 
 			{#if !data.project.githubUrl && !data.project.liveUrl}
 				<div class="no-links">
@@ -147,31 +160,39 @@
 		<!-- Terminal Section -->
 		<div class="panel terminal-section" data-label="BUILD_LOGS">
 			<div class="terminal-tabs">
-				<div class="tab active">output_log</div>
-				<div class="tab">error_log</div>
-				<div class="tab">commits</div>
+				<button class="tab" class:active={activeTab === 'output'} onclick={() => activeTab = 'output'}>output_log</button>
+				<button class="tab" class:active={activeTab === 'error'} onclick={() => activeTab = 'error'}>error_log</button>
+				<button class="tab" class:active={activeTab === 'commits'} onclick={() => activeTab = 'commits'}>commits</button>
 			</div>
 
 			<div class="terminal-content">
-				{#each data.milestones as milestone, i (milestone.id)}
-					<div class="log-row" class:done={milestone.isCompleted}>
-						<span class="log-id">{String(i + 1).padStart(2, '0')}</span>
-						<span class="log-title">{milestone.title}</span>
-						<span class="log-date">
-							{milestone.completedAt ? formatDate(milestone.completedAt) : '--'}
-						</span>
-					</div>
-				{/each}
+				{#if activeTab === 'output'}
+					{#each data.milestones as milestone, i (milestone.id)}
+						<div class="log-row" class:done={milestone.isCompleted}>
+							<span class="log-id">{String(i + 1).padStart(2, '0')}</span>
+							<span class="log-title">{milestone.title}</span>
+							<span class="log-date">
+								{milestone.completedAt ? formatDate(milestone.completedAt) : '--'}
+							</span>
+						</div>
+					{/each}
 
-				{#if data.project.isCompleted}
-					<div class="terminal-success">
-						> PROJECT_BUILD_SUCCESSFUL<br />
-						> WAITING FOR NEXT COMMAND_<span class="cursor-blink"></span>
-					</div>
+					{#if data.project.isCompleted}
+						<div class="terminal-success">
+							> PROJECT_BUILD_SUCCESSFUL<br />
+							> WAITING FOR NEXT COMMAND_<span class="cursor-blink"></span>
+						</div>
+					{:else}
+						<div class="terminal-progress">
+							> BUILD_IN_PROGRESS... {data.progress}%<br />
+							> AWAITING_COMPLETION_<span class="cursor-blink"></span>
+						</div>
+					{/if}
 				{:else}
-					<div class="terminal-progress">
-						> BUILD_IN_PROGRESS... {data.progress}%<br />
-						> AWAITING_COMPLETION_<span class="cursor-blink"></span>
+					<div class="coming-soon">
+						<span class="coming-soon-icon">⚙</span>
+						<span class="coming-soon-text">COMING_SOON</span>
+						<span class="coming-soon-desc">This feature is under development</span>
 					</div>
 				{/if}
 			</div>
@@ -315,6 +336,15 @@
 		text-overflow: ellipsis;
 	}
 
+	.code-line-desc {
+		white-space: normal;
+		overflow: visible;
+	}
+
+	.desc-value {
+		word-break: break-word;
+	}
+
 	.line-num {
 		color: #444;
 		margin-right: 15px;
@@ -325,11 +355,28 @@
 	.string { color: #f1c40f; }
 	.var { color: #27c93f; }
 
+	.owner-link {
+		text-decoration: none;
+		transition: opacity 0.2s;
+	}
+
+	.owner-link:hover {
+		opacity: 0.8;
+		text-decoration: underline;
+	}
+
+	.owner-username {
+		color: var(--color-success);
+		font-size: 14px;
+	}
+
+	
 	/* Links Panel */
 	.links-panel {
 		display: flex;
 		flex-direction: column;
 		gap: 15px;
+		padding-top: 30px;
 	}
 
 	.connection-card {
@@ -435,9 +482,12 @@
 	.tab {
 		padding: 10px 20px;
 		font-size: 12px;
+		font-family: inherit;
 		color: #666;
 		cursor: pointer;
+		border: none;
 		border-right: 1px solid #222;
+		background: transparent;
 		transition: all 0.2s;
 	}
 
@@ -460,6 +510,34 @@
 			linear-gradient(90deg, #111 1px, transparent 1px);
 		background-size: 20px 20px;
 		background-position: -1px -1px;
+	}
+
+	.coming-soon {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		min-height: 200px;
+		gap: 10px;
+		color: #444;
+	}
+
+	.coming-soon-icon {
+		font-size: 32px;
+		opacity: 0.5;
+	}
+
+	.coming-soon-text {
+		font-size: 18px;
+		font-weight: bold;
+		letter-spacing: 2px;
+		color: #555;
+	}
+
+	.coming-soon-desc {
+		font-size: 12px;
+		color: #444;
 	}
 
 	.log-row {
