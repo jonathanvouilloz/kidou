@@ -67,7 +67,7 @@
 - [x] Animations terminal
 - [x] Responsive
 - [ ] Gestion erreurs
-- [ ] Limite 3 projets
+- [x] Limite 3 projets
 - [ ] Deploy Vercel
 
 ---

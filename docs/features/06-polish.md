@@ -31,9 +31,9 @@ Finitions, animations, responsive, et déploiement.
 
 ### Limite projets
 
-- [ ] Vérification côté serveur (max 3)
-- [ ] Message d'erreur clair si limite atteinte
-- [ ] Affichage compteur dans dashboard
+- [x] Vérification côté serveur (max 3)
+- [x] Message d'erreur clair si limite atteinte
+- [x] Affichage compteur dans dashboard
 
 ### Accessibilité
 

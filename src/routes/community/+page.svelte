@@ -1,45 +1,60 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import FilterBar from '$lib/components/ui/FilterBar.svelte';
 	import MatrixBackground from '$lib/components/ui/MatrixBackground.svelte';
 	import TerminalCard from '$lib/components/project/TerminalCard.svelte';
+	import Button from '$lib/components/ui/Button.svelte';
 	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
 
-	let selectedStatus = $state<'all' | 'done' | 'building' | 'waiting'>('all');
-	let selectedDate = $state('all');
+	// Status filtré côté client uniquement (pas de rechargement serveur)
+	let selectedStatus = $state<'all' | 'done' | 'building' | 'waiting'>(
+		($page.url.searchParams.get('status') ?? 'all') as 'all' | 'done' | 'building' | 'waiting'
+	);
 
-	// Extract unique year-month combinations from projects (uses pre-computed dateKey)
-	const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-	const availableDates = $derived(() => {
-		const dateMap = new Map<string, string>();
+	// Date et page depuis l'URL (nécessitent rechargement serveur)
+	let currentDate = $derived($page.url.searchParams.get('date') ?? 'all');
+	let currentPage = $derived(data.pagination.page);
 
-		for (const project of data.projects) {
-			if (!dateMap.has(project.dateKey)) {
-				const [year, month] = project.dateKey.split('-');
-				const label = `${months[parseInt(month) - 1]} ${year}`;
-				dateMap.set(project.dateKey, label);
-			}
+	// Navigation pour date/page uniquement (rechargement serveur)
+	function navigateWithParams(newDate?: string, newPage?: number) {
+		const params = new URLSearchParams();
+		const date = newDate ?? currentDate;
+		const pg = newPage ?? 1;
+
+		// Conserver le status dans l'URL pour le partage
+		if (selectedStatus !== 'all') params.set('status', selectedStatus);
+		if (date !== 'all') params.set('date', date);
+		if (pg > 1) params.set('page', pg.toString());
+
+		const query = params.toString();
+		goto(`/community${query ? '?' + query : ''}`, { replaceState: false });
+	}
+
+	// Mise à jour status (client-side, pas de navigation)
+	function updateStatus(status: 'all' | 'done' | 'building' | 'waiting') {
+		selectedStatus = status;
+		// Mettre à jour l'URL sans recharger (pour le partage)
+		const params = new URLSearchParams($page.url.searchParams);
+		if (status === 'all') {
+			params.delete('status');
+		} else {
+			params.set('status', status);
 		}
+		const query = params.toString();
+		history.replaceState({}, '', `/community${query ? '?' + query : ''}`);
+	}
 
-		return Array.from(dateMap.entries())
-			.sort((a, b) => b[0].localeCompare(a[0])) // Most recent first
-			.map(([value, label]) => ({ value, label }));
-	});
-
-	// Optimized filtering using pre-computed dateKey
+	// Filtrage par status côté client (instantané, pas de requête serveur)
 	let filteredProjects = $derived(
 		data.projects.filter((p) => {
-			// Status filter
 			if (selectedStatus !== 'all') {
 				if (selectedStatus === 'done' && p.progress !== 100) return false;
 				if (selectedStatus === 'building' && (p.progress <= 0 || p.progress >= 100)) return false;
 				if (selectedStatus === 'waiting' && p.progress !== 0) return false;
 			}
-
-			// Date filter (uses pre-computed dateKey - no Date parsing)
-			if (selectedDate !== 'all' && p.dateKey !== selectedDate) return false;
-
 			return true;
 		})
 	);
@@ -63,11 +78,11 @@
 		</header>
 
 		<FilterBar
-			{selectedStatus}
-			onchange={(s) => (selectedStatus = s)}
-			availableDates={availableDates()}
-			{selectedDate}
-			ondatechange={(d) => (selectedDate = d)}
+			selectedStatus={selectedStatus}
+			onchange={updateStatus}
+			availableDates={data.availableDates}
+			selectedDate={currentDate}
+			ondatechange={(d) => navigateWithParams(d, undefined)}
 		/>
 
 		{#if filteredProjects.length === 0}
@@ -89,6 +104,26 @@
 					/>
 				{/each}
 			</div>
+
+			{#if data.pagination.totalPages > 1}
+				<nav class="pagination">
+					<Button
+						variant="ghost"
+						disabled={currentPage <= 1}
+						onclick={() => navigateWithParams(undefined, currentPage - 1)}
+					>
+						← Prev
+					</Button>
+					<span class="pagination-info">{currentPage} / {data.pagination.totalPages}</span>
+					<Button
+						variant="ghost"
+						disabled={currentPage >= data.pagination.totalPages}
+						onclick={() => navigateWithParams(undefined, currentPage + 1)}
+					>
+						Next →
+					</Button>
+				</nav>
+			{/if}
 		{/if}
 	</div>
 </main>
@@ -165,6 +200,22 @@
 
 	.empty-hint {
 		font-size: var(--text-sm);
+	}
+
+	.pagination {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		gap: var(--space-4);
+		margin-top: var(--space-8);
+		padding-top: var(--space-6);
+		border-top: 1px solid var(--color-border);
+	}
+
+	.pagination-info {
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--color-text-muted);
 	}
 
 	@media (max-width: 768px) {
