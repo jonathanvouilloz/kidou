@@ -4,6 +4,7 @@ import { db } from './db';
 import * as schema from './db/schema';
 import { BETTER_AUTH_SECRET } from '$env/static/private';
 import { PUBLIC_APP_URL } from '$env/static/public';
+import { sendEmail, getVerificationEmailHtml, getPasswordResetEmailHtml } from './email';
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -19,7 +20,25 @@ export const auth = betterAuth({
 	baseURL: PUBLIC_APP_URL,
 	emailAndPassword: {
 		enabled: true,
-		requireEmailVerification: false
+		requireEmailVerification: true,
+		sendResetPassword: async ({ user, url }) => {
+			void sendEmail({
+				to: user.email,
+				subject: 'Reset your Kidou password',
+				html: getPasswordResetEmailHtml(url, user.name ?? user.email)
+			});
+		}
+	},
+	emailVerification: {
+		sendOnSignUp: true,
+		autoSignInAfterVerification: true,
+		sendVerificationEmail: async ({ user, url }) => {
+			void sendEmail({
+				to: user.email,
+				subject: 'Verify your Kidou email',
+				html: getVerificationEmailHtml(url, user.name ?? user.email)
+			});
+		}
 	},
 	user: {
 		additionalFields: {

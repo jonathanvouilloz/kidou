@@ -5,4 +5,4 @@ export const authClient = createAuthClient({
 	baseURL: PUBLIC_APP_URL
 });
 
-export const { signIn, signUp, signOut, useSession } = authClient;
+export const { signIn, signUp, signOut, useSession, forgetPassword, resetPassword, sendVerificationEmail } = authClient;

@@ -59,7 +59,7 @@
 					errors.form = result.error.message ?? m.auth_registerError();
 				}
 			} else {
-				await goto('/dashboard');
+				await goto(`/auth/verify-email?email=${encodeURIComponent(email)}`);
 			}
 		} catch (err) {
 			errors.form = m.auth_registerErrorRetry();

@@ -1,6 +1,7 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
 	import { signIn } from '$lib/auth-client';
+	import { showToast } from '$lib/stores/toast';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Input from '$lib/components/ui/Input.svelte';
 	import Card from '$lib/components/ui/Card.svelte';
@@ -27,6 +28,8 @@
 			if (result.error) {
 				error = result.error.message ?? m.auth_loginError();
 			} else {
+				await invalidateAll();
+				showToast('Welcome back!', 'success');
 				await goto('/dashboard');
 			}
 		} catch (err) {
@@ -64,6 +67,10 @@
 			autocomplete="current-password"
 			disabled={loading}
 		/>
+
+		<div class="forgot-password">
+			<a href="/auth/forgot-password">{m.auth_forgotPassword()}</a>
+		</div>
 
 		<Button type="submit" disabled={loading}>
 			{#if loading}
@@ -104,5 +111,20 @@
 	.form-footer a {
 		color: var(--color-text);
 		text-decoration: underline;
+	}
+
+	.forgot-password {
+		text-align: right;
+		margin-top: calc(-1 * var(--space-2));
+	}
+
+	.forgot-password a {
+		font-size: var(--text-sm);
+		color: var(--color-text-secondary);
+		text-decoration: underline;
+	}
+
+	.forgot-password a:hover {
+		color: var(--color-text);
 	}
 </style>
