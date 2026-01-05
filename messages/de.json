@@ -1,4 +1,45 @@
 {
   "$schema": "https://inlang.com/schema/inlang-message-format",
-  "example_message": "Guten Tag {username}"
+  "example_message": "Guten Tag {username}",
+
+  "landing_manifesto_timestamp": "2024-01-15",
+  "landing_manifesto_timestamp2": "2024-02-01",
+  "landing_manifesto_timestamp3": "JETZT",
+  "landing_manifesto_line1": "Genervt von überkomplizierten Projektmanagement-Tools.",
+  "landing_manifesto_line2": "Wollte nur meinen Fortschritt tracken und mit cooler Terminal-Ästhetik teilen.",
+  "landing_manifesto_line3": "Also habe ich Kidou gebaut. Einfach. Sauber. Teilbar.",
+
+  "landing_howItWorks_title": "So funktioniert's",
+  "landing_howItWorks_step1Title": "PRD hochladen",
+  "landing_howItWorks_step1Desc": "Dokument einfügen, KI extrahiert Meilensteine",
+  "landing_howItWorks_step1Output": "5 Meilensteine extrahiert",
+  "landing_howItWorks_step2Title": "Fortschritt tracken",
+  "landing_howItWorks_step2Desc": "Meilensteine beim Bauen abhaken",
+  "landing_howItWorks_step2Output": "3/5 abgeschlossen",
+  "landing_howItWorks_step3Title": "Öffentlich teilen",
+  "landing_howItWorks_step3Desc": "Deine Terminal-Style öffentliche Seite",
+  "landing_howItWorks_step3Output": "kidou.io/du/projekt",
+
+  "landing_pricing_title": "Preise",
+  "landing_pricing_freeName": "Kostenlos",
+  "landing_pricing_proName": "Pro",
+  "landing_pricing_forever": "für immer",
+  "landing_pricing_perMonth": "pro Monat",
+  "landing_pricing_popular": "Beliebt",
+  "landing_pricing_freeProjects": "3 Projekte",
+  "landing_pricing_freeAI": "1 KI-Extraktion / Tag",
+  "landing_pricing_proProjects": "5 Projekte",
+  "landing_pricing_proAI": "50 KI-Extraktionen / Tag",
+  "landing_pricing_publicProfile": "Öffentliches Profil",
+  "landing_pricing_manualMilestones": "Unbegrenzte manuelle Meilensteine",
+  "landing_pricing_prioritySupport": "Prioritäts-Support",
+  "landing_pricing_freeButton": "Jetzt starten",
+  "landing_pricing_proButton": "Auf Pro upgraden",
+
+  "landing_testimonials_title": "Was Builder sagen",
+  "landing_testimonials_cta": "Schreibe dein Testimonial",
+
+  "landing_finalCta_command": "ready --build-in-public",
+  "landing_finalCta_title": "Bereit, öffentlich zu bauen?",
+  "landing_finalCta_subtitle": "Schließe dich Entwicklern an, die ihre Projekte mit Stil shippen."
 }

@@ -162,5 +162,46 @@
   "styleguide_modalContent": "Modal content. You can put anything here.",
   "styleguide_operationSuccess": "Operation successful!",
   "styleguide_errorOccurred": "An error occurred.",
-  "styleguide_importantInfo": "Important information."
+  "styleguide_importantInfo": "Important information.",
+
+  "landing_manifesto_timestamp": "2024-01-15",
+  "landing_manifesto_timestamp2": "2024-02-01",
+  "landing_manifesto_timestamp3": "NOW",
+  "landing_manifesto_line1": "Tired of overcomplicated project management tools.",
+  "landing_manifesto_line2": "Just wanted to track my progress and share it with a cool terminal aesthetic.",
+  "landing_manifesto_line3": "So I built Kidou. Simple. Clean. Shareable.",
+
+  "landing_howItWorks_title": "How it works",
+  "landing_howItWorks_step1Title": "Upload your PRD",
+  "landing_howItWorks_step1Desc": "Paste your document, AI extracts milestones",
+  "landing_howItWorks_step1Output": "5 milestones extracted",
+  "landing_howItWorks_step2Title": "Track progress",
+  "landing_howItWorks_step2Desc": "Check off milestones as you build",
+  "landing_howItWorks_step2Output": "3/5 completed",
+  "landing_howItWorks_step3Title": "Share publicly",
+  "landing_howItWorks_step3Desc": "Your terminal-style public page",
+  "landing_howItWorks_step3Output": "kidou.io/you/project",
+
+  "landing_pricing_title": "Pricing",
+  "landing_pricing_freeName": "Free",
+  "landing_pricing_proName": "Pro",
+  "landing_pricing_forever": "forever",
+  "landing_pricing_perMonth": "per month",
+  "landing_pricing_popular": "Popular",
+  "landing_pricing_freeProjects": "3 projects",
+  "landing_pricing_freeAI": "1 AI extraction / day",
+  "landing_pricing_proProjects": "5 projects",
+  "landing_pricing_proAI": "50 AI extractions / day",
+  "landing_pricing_publicProfile": "Public profile",
+  "landing_pricing_manualMilestones": "Unlimited manual milestones",
+  "landing_pricing_prioritySupport": "Priority support",
+  "landing_pricing_freeButton": "Get Started",
+  "landing_pricing_proButton": "Upgrade to Pro",
+
+  "landing_testimonials_title": "What builders say",
+  "landing_testimonials_cta": "Write your testimonial",
+
+  "landing_finalCta_command": "ready --build-in-public",
+  "landing_finalCta_title": "Ready to build in public?",
+  "landing_finalCta_subtitle": "Join developers who ship their projects with style."
 }

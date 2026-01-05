@@ -4,10 +4,14 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
 	import PulsatingCircles from '$lib/components/ui/PulsatingCircles.svelte';
+	import ManifestoSection from '$lib/components/landing/ManifestoSection.svelte';
+	import HowItWorksSection from '$lib/components/landing/HowItWorksSection.svelte';
+	import PricingSection from '$lib/components/landing/PricingSection.svelte';
+	import TestimonialTerminals from '$lib/components/landing/TestimonialTerminals.svelte';
+	import FinalCTA from '$lib/components/landing/FinalCTA.svelte';
 	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
-
 
 	const demoMilestones = [
 		{ id: '1', title: 'Setup project', isCompleted: true },
@@ -48,24 +52,18 @@
 				</p>
 			{/if}
 		</section>
+	</div>
 
-		<section class="features">
-			<div class="feature">
-				<span class="feature-icon">01</span>
-				<h3>{m.landing_feature1Title()}</h3>
-				<p>{m.landing_feature1Desc()}</p>
-			</div>
-			<div class="feature">
-				<span class="feature-icon">02</span>
-				<h3>{m.landing_feature2Title()}</h3>
-				<p>{m.landing_feature2Desc()}</p>
-			</div>
-			<div class="feature">
-				<span class="feature-icon">03</span>
-				<h3>{m.landing_feature3Title()}</h3>
-				<p>{m.landing_feature3Desc()}</p>
-			</div>
-		</section>
+	<div class="sections-container">
+		<ManifestoSection />
+
+		<HowItWorksSection />
+
+		<PricingSection isLoggedIn={!!data.user} />
+
+		<TestimonialTerminals />
+
+		<FinalCTA isLoggedIn={!!data.user} />
 	</div>
 </main>
 
@@ -74,21 +72,25 @@
 <style>
 	.landing {
 		min-height: calc(100vh - 60px);
-		display: flex;
-		align-items: center;
-		justify-content: center;
 		padding: var(--space-8) var(--space-4);
 	}
 
 	.container {
 		max-width: 600px;
 		width: 100%;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		min-height: calc(100vh - 200px);
 	}
 
 	.hero {
 		position: relative;
 		text-align: center;
 		margin-bottom: var(--space-8);
+		width: 100%;
 	}
 
 	.logo {
@@ -109,6 +111,7 @@
 
 	.terminal-demo {
 		margin-bottom: var(--space-8);
+		width: 100%;
 	}
 
 	.cta {
@@ -127,35 +130,13 @@
 		text-decoration: underline;
 	}
 
-	.features {
-		display: grid;
-		grid-template-columns: repeat(3, 1fr);
-		gap: var(--space-4);
-		margin-top: var(--space-8);
-	}
-
-	.feature {
-		text-align: center;
-		padding: var(--space-4);
-	}
-
-	.feature-icon {
-		display: inline-block;
-		font-size: var(--text-xs);
-		color: var(--color-success);
-		margin-bottom: var(--space-2);
-	}
-
-	.feature h3 {
-		font-size: var(--text-sm);
-		font-weight: 500;
-		margin-bottom: var(--space-1);
-	}
-
-	.feature p {
-		font-size: var(--text-xs);
-		color: var(--color-text-muted);
-		line-height: 1.4;
+	.sections-container {
+		max-width: 700px;
+		margin: 0 auto;
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-16);
+		padding: var(--space-8) 0;
 	}
 
 	@keyframes blink {
@@ -165,9 +146,12 @@
 	}
 
 	@media (max-width: 600px) {
-		.features {
-			grid-template-columns: 1fr;
-			gap: var(--space-6);
+		.container {
+			min-height: calc(100vh - 300px);
+		}
+
+		.sections-container {
+			gap: var(--space-12);
 		}
 	}
 </style>

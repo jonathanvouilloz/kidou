@@ -1,0 +1,37 @@
+[
+  {
+    "id": "1",
+    "username": "sarah",
+    "host": "startup",
+    "text": "Finally a progress tracker that feels like home. No bloated dashboards, just pure terminal vibes.",
+    "role": "Indie Hacker"
+  },
+  {
+    "id": "2",
+    "username": "mike",
+    "host": "devbox",
+    "text": "I shipped 3 side projects this year. Kidou helped me stay focused and accountable.",
+    "role": "Full-Stack Dev"
+  },
+  {
+    "id": "3",
+    "username": "alex",
+    "host": "localhost",
+    "text": "Build in public without the noise. Just milestones, progress, and a clean terminal aesthetic.",
+    "role": "Solopreneur"
+  },
+  {
+    "id": "4",
+    "username": "nina",
+    "host": "remote",
+    "text": "The AI milestone extraction is magic. Paste your PRD, get a roadmap. Simple as that.",
+    "role": "Product Builder"
+  },
+  {
+    "id": "5",
+    "username": "tom",
+    "host": "server",
+    "text": "Every dev should have a public progress page. Kidou makes it effortless and cool.",
+    "role": "Open Source Dev"
+  }
+]
