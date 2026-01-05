@@ -10,6 +10,21 @@
 		(data.profileUser.name || data.profileUser.username).replace(/\s+/g, '_').toUpperCase()
 	);
 
+	// Format date
+	function formatDate(date: Date | null) {
+		if (!date) return null;
+		return new Date(date).toLocaleDateString('en-US', {
+			year: 'numeric',
+			month: '2-digit',
+			day: '2-digit'
+		});
+	}
+
+	// Stats
+	const totalProjects = $derived(data.projects.length);
+	const completedProjects = $derived(data.projects.filter(p => p.isCompleted).length);
+	const buildingProjects = $derived(data.projects.filter(p => !p.isCompleted && p.progress > 0).length);
+
 	// Filter states
 	let selectedStatus = $state<'all' | 'done' | 'building' | 'waiting'>('all');
 	let selectedDate = $state('all');
@@ -93,6 +108,62 @@
 			</div>
 		</header>
 
+		<!-- Bento Grid -->
+		<div class="bento-grid">
+			<!-- Info Panel (README style) -->
+			<div class="panel info-panel" data-label="README.md">
+				<div class="editor-menu">
+					<span>File</span>
+					<span>Edit</span>
+					<span>View</span>
+				</div>
+
+				<div class="code-editor">
+					<div class="code-line">
+						<span class="line-num">01</span><span class="keyword">const</span> user = {'{'}</div>
+					<div class="code-line">
+						<span class="line-num">02</span>&nbsp;&nbsp;username: <span class="string">"{data.profileUser.username}"</span>,
+					</div>
+					<div class="code-line">
+						<span class="line-num">03</span>&nbsp;&nbsp;name: {#if data.profileUser.name}<span class="string">"{data.profileUser.name}"</span>{:else}<span class="keyword">null</span>{/if},
+					</div>
+					<div class="code-line">
+						<span class="line-num">04</span>&nbsp;&nbsp;joined: <span class="string">"{formatDate(data.profileUser.createdAt)}"</span>,
+					</div>
+					<div class="code-line">
+						<span class="line-num">05</span>&nbsp;&nbsp;projects: <span class="var">{totalProjects}</span>,
+					</div>
+					<div class="code-line">
+						<span class="line-num">06</span>&nbsp;&nbsp;completed: <span class="var">{completedProjects}</span>,
+					</div>
+					<div class="code-line">
+						<span class="line-num">07</span>&nbsp;&nbsp;building: <span class="var">{buildingProjects}</span>
+					</div>
+					<div class="code-line">
+						<span class="line-num">08</span>{'}'};
+					</div>
+				</div>
+			</div>
+
+			<!-- Links Panel -->
+			<div class="panel links-panel" data-label="NETWORK_INTERFACES">
+				<div class="no-links">
+					<span>NO_EXTERNAL_LINKS</span>
+				</div>
+
+				<div class="stats-grid">
+					<div class="stat-box">
+						<div class="stat-val">{totalProjects}</div>
+						<div class="stat-lbl">PROJECTS</div>
+					</div>
+					<div class="stat-box">
+						<div class="stat-val">{completedProjects}</div>
+						<div class="stat-lbl">COMPLETED</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<FilterBar
 			{selectedStatus}
 			onchange={(s) => (selectedStatus = s)}
@@ -172,6 +243,119 @@
 
 	.breadcrumb .current {
 		color: var(--color-text-secondary);
+	}
+
+	/* Bento Grid */
+	.bento-grid {
+		display: grid;
+		grid-template-columns: 2fr 1fr;
+		gap: 15px;
+		margin-bottom: var(--space-6);
+	}
+
+	/* Panels */
+	.panel {
+		background: var(--color-bg);
+		border: 1px solid var(--color-border);
+		border-radius: 6px;
+		padding: 20px;
+		position: relative;
+		overflow: hidden;
+		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+	}
+
+	.panel::before {
+		content: attr(data-label);
+		position: absolute;
+		top: 0;
+		right: 0;
+		background: var(--color-bg-elevated);
+		color: #555;
+		font-size: 10px;
+		padding: 2px 8px;
+		border-bottom-left-radius: 4px;
+		border-left: 1px solid var(--color-border);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	/* Info Panel */
+	.info-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+	}
+
+	.editor-menu {
+		display: flex;
+		gap: 10px;
+		font-size: 11px;
+		color: #555;
+	}
+
+	.code-editor {
+		font-size: 14px;
+		line-height: 1.6;
+		color: #ccc;
+		background: #0f0f0f;
+		padding: 15px;
+		border-left: 3px solid var(--color-accent-dim, #008F11);
+	}
+
+	.code-line {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.line-num {
+		color: #444;
+		margin-right: 15px;
+		user-select: none;
+	}
+
+	.keyword { color: #ff5f56; }
+	.string { color: #f1c40f; }
+	.var { color: #27c93f; }
+
+	/* Links Panel */
+	.links-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 15px;
+		padding-top: 30px;
+	}
+
+	.no-links {
+		text-align: center;
+		padding: 20px;
+		color: #444;
+		font-size: 12px;
+	}
+
+	/* Stats Grid */
+	.stats-grid {
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+		gap: 10px;
+		margin-top: auto;
+	}
+
+	.stat-box {
+		background: #111;
+		padding: 10px;
+		text-align: center;
+		border: 1px dashed #333;
+	}
+
+	.stat-val {
+		font-size: 20px;
+		font-weight: bold;
+		color: var(--color-text);
+	}
+
+	.stat-lbl {
+		font-size: 10px;
+		color: #666;
 	}
 
 	.title-row {
@@ -267,6 +451,10 @@
 			align-items: flex-start;
 			gap: 15px;
 		}
+
+		.bento-grid {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	@media (max-width: 480px) {
@@ -285,6 +473,11 @@
 
 		.empty-state {
 			padding: var(--space-6);
+		}
+
+		.code-editor {
+			font-size: 12px;
+			padding: 10px;
 		}
 	}
 </style>

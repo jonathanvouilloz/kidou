@@ -12,7 +12,8 @@ export const load: PageServerLoad = async ({ params }) => {
 			username: users.username,
 			name: users.name,
 			avatarUrl: users.avatarUrl,
-			accentColor: users.accentColor
+			accentColor: users.accentColor,
+			createdAt: users.createdAt
 		})
 		.from(users)
 		.where(eq(users.username, params.user))
