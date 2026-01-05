@@ -1,7 +1,9 @@
 <script lang="ts">
 	import Button from '$lib/components/ui/Button.svelte';
+	import Loader from '$lib/components/ui/Loader.svelte';
 	import { signOut } from '$lib/auth-client';
-	import { goto } from '$app/navigation';
+	import { goto, invalidateAll } from '$app/navigation';
+	import { showToast } from '$lib/stores/toast';
 	import * as m from '$lib/paraglide/messages';
 
 	interface Props {
@@ -14,11 +16,15 @@
 	let { user = null }: Props = $props();
 	let menuOpen = $state(false);
 	let mobileMenuOpen = $state(false);
+	let loggingOut = $state(false);
 
 	async function handleLogout() {
+		loggingOut = true;
 		menuOpen = false;
 		mobileMenuOpen = false;
 		await signOut();
+		showToast('Logged out successfully', 'success');
+		await invalidateAll();
 		await goto('/');
 	}
 
@@ -51,6 +57,7 @@
 <header class="header">
 	<div class="header-container">
 		<a href="/" class="logo">
+			<img src="/kidoulogo.png" alt="Kidou" class="logo-icon" />
 			kidou<span class="logo-cursor">_</span>
 		</a>
 
@@ -91,7 +98,13 @@
 							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 							<div class="dropdown" onclick={(e) => e.stopPropagation()}>
 								<a href="/settings" class="dropdown-item">{m.nav_settings()}</a>
-								<button class="dropdown-item" onclick={handleLogout}>{m.nav_logout()}</button>
+								<button class="dropdown-item" onclick={handleLogout} disabled={loggingOut}>
+									{#if loggingOut}
+										<Loader size="sm" /> Logging out...
+									{:else}
+										{m.nav_logout()}
+									{/if}
+								</button>
 							</div>
 						{/if}
 					</div>
@@ -128,7 +141,13 @@
 				<a href="/{user.username}" class="mobile-link" onclick={closeMobileMenu}>My Page</a>
 				<a href="/project/new" class="mobile-link" onclick={closeMobileMenu}>Init project</a>
 				<a href="/settings" class="mobile-link" onclick={closeMobileMenu}>{m.nav_settings()}</a>
-				<button class="mobile-link" onclick={handleLogout}>{m.nav_logout()}</button>
+				<button class="mobile-link" onclick={handleLogout} disabled={loggingOut}>
+					{#if loggingOut}
+						<Loader size="sm" /> Logging out...
+					{:else}
+						{m.nav_logout()}
+					{/if}
+				</button>
 			{:else}
 				<a href="/auth/login" class="mobile-link" onclick={closeMobileMenu}>{m.nav_login()}</a>
 				<a href="/auth/register" class="mobile-link" onclick={closeMobileMenu}>{m.nav_register()}</a>
@@ -156,15 +175,24 @@
 	}
 
 	.logo {
+		display: flex;
+		align-items: center;
+		gap: var(--space-3);
 		font-size: var(--text-xl);
 		font-weight: 500;
 		color: var(--color-text);
 		text-decoration: none;
 	}
 
+	.logo-icon {
+		width: 36px;
+		height: 36px;
+		object-fit: contain;
+	}
+
 	.logo-cursor {
 		color: var(--color-success);
-		animation: blink 1s step-end infinite;
+		animation: blink 1.1s step-end infinite;
 	}
 
 	@keyframes blink {

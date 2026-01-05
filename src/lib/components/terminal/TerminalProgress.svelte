@@ -78,26 +78,12 @@
 		{#if isDone}
 			<TerminalDone />
 		{:else if showCursor}
-			<div class="terminal-cursor">
-				<span class="cursor-blink">█</span>
-			</div>
+			<TerminalLine
+				lineNumber={milestones.length + 1}
+				completed={false}
+				text="Add milestone..."
+			/>
 		{/if}
 	{/if}
 </Terminal>
 
-<style>
-	.terminal-cursor {
-		margin-top: var(--space-4);
-	}
-
-	.cursor-blink {
-		animation: blink 1s step-end infinite;
-		color: var(--color-accent);
-	}
-
-	@keyframes blink {
-		50% {
-			opacity: 0;
-		}
-	}
-</style>
