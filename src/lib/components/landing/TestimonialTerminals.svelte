@@ -98,7 +98,7 @@
 		font-family: var(--font-mono);
 		font-size: var(--text-xs);
 		padding: var(--space-2) var(--space-3);
-		background: var(--color-bg);
+		background: #0a0a0a;
 		border: 1px solid var(--color-border);
 		border-bottom: none;
 		border-radius: var(--radius-sm) var(--radius-sm) 0 0;
@@ -122,7 +122,7 @@
 	}
 
 	.terminal-window {
-		background: var(--color-bg);
+		background: #0a0a0a;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		overflow: hidden;

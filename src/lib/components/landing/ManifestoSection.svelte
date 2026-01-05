@@ -17,20 +17,29 @@
 			<span class="timestamp">[{m.landing_manifesto_timestamp2()}]</span>
 			{m.landing_manifesto_line2()}
 		</p>
-		<p class="log-line highlight">
+		<p class="log-line">
 			<span class="timestamp">[{m.landing_manifesto_timestamp3()}]</span>
 			{m.landing_manifesto_line3()}
+		</p>
+		<p class="log-line">
+			<span class="timestamp">[{m.landing_manifesto_timestamp4()}]</span>
+			{m.landing_manifesto_line4()}
+		</p>
+		<p class="log-line highlight">
+			<span class="timestamp">[{m.landing_manifesto_timestamp5()}]</span>
+			{m.landing_manifesto_line5()}
 		</p>
 	</div>
 	<div class="manifesto-footer">
 		<span class="prompt">$</span>
+		<span class="next-prompt">what is your excuse to not share what you do now?</span>
 		<span class="cursor">_</span>
 	</div>
 </section>
 
 <style>
 	.manifesto {
-		background: var(--color-bg);
+		background: #0a0a0a;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		font-family: var(--font-mono);
@@ -89,6 +98,10 @@
 		padding: var(--space-3) var(--space-4);
 		background: var(--color-bg-elevated);
 		border-top: 1px solid var(--color-border);
+	}
+
+	.next-prompt {
+		color: var(--color-success);
 	}
 
 	.cursor {

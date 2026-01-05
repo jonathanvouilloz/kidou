@@ -114,7 +114,7 @@
 	}
 
 	.pricing-card {
-		background: var(--color-bg);
+		background: #0a0a0a;
 		border: 1px solid var(--color-border);
 		border-radius: var(--radius-md);
 		display: flex;

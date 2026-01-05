@@ -3,7 +3,6 @@
 	import TerminalProgress from '$lib/components/terminal/TerminalProgress.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Footer from '$lib/components/layout/Footer.svelte';
-	import PulsatingCircles from '$lib/components/ui/PulsatingCircles.svelte';
 	import ManifestoSection from '$lib/components/landing/ManifestoSection.svelte';
 	import HowItWorksSection from '$lib/components/landing/HowItWorksSection.svelte';
 	import PricingSection from '$lib/components/landing/PricingSection.svelte';
@@ -33,7 +32,6 @@
 <main class="landing">
 	<div class="container">
 		<header class="hero">
-			<PulsatingCircles />
 			<h1 class="logo">kidou<span class="cursor">_</span></h1>
 			<p class="tagline">Track your progress, build in public</p>
 		</header>
@@ -73,6 +71,16 @@
 	.landing {
 		min-height: calc(100vh - 60px);
 		padding: var(--space-8) var(--space-4);
+	}
+
+	.landing::before {
+		content: '';
+		position: fixed;
+		inset: 0;
+		pointer-events: none;
+		z-index: -1;
+		opacity: 0.04;
+		background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
 	}
 
 	.container {
