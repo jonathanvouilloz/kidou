@@ -64,66 +64,62 @@
 
 		<!-- Desktop nav -->
 		<nav class="nav desktop-nav">
-			<div class="nav-left"></div>
-
-			<div class="nav-center">
-				{#if !user && isLandingPage}
-					<a href="#how-it-works" class="nav-link">How it works</a>
-					<a href="#explore" class="nav-link">{m.nav_explore()}</a>
-					<a href="#pricing" class="nav-link">Pricing</a>
-					<a href="#testimonials" class="nav-link">Testimonials</a>
-				{:else}
-					<a href="/community" class="nav-link">{m.nav_explore()}</a>
-					{#if user}
-						<a href="/dashboard" class="nav-link">{m.nav_dashboard()}</a>
-						<a href="/{user.username}" class="nav-link">My Page</a>
-					{/if}
-				{/if}
-			</div>
-
-			<div class="nav-right">
+			{#if !user && isLandingPage}
+				<a href="#how-it-works" class="nav-link">How it works</a>
+				<a href="#explore" class="nav-link">{m.nav_explore()}</a>
+				<a href="#pricing" class="nav-link">Pricing</a>
+				<a href="#testimonials" class="nav-link">Testimonials</a>
+			{:else}
+				<a href="/community" class="nav-link">{m.nav_explore()}</a>
 				{#if user}
-					<Button variant="ghost" size="sm" onclick={() => goto('/project/new')}>
-						Init project
-					</Button>
-					<div class="user-menu">
-						<button
-							class="user-button"
-							onclick={(e) => {
-								e.stopPropagation();
-								toggleMenu();
-							}}
-						>
-							{#if user.avatarUrl}
-								<img src={user.avatarUrl} alt={user.username} class="user-avatar" />
-							{:else}
-								<span class="user-initial">{user.username[0].toUpperCase()}</span>
-							{/if}
-							<span class="user-name">{user.username}</span>
-						</button>
-
-						{#if menuOpen}
-							<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
-							<div class="dropdown" onclick={(e) => e.stopPropagation()}>
-								<a href="/settings" class="dropdown-item">{m.nav_settings()}</a>
-								<button class="dropdown-item" onclick={handleLogout} disabled={loggingOut}>
-									{#if loggingOut}
-										<Loader size="sm" /> Logging out...
-									{:else}
-										{m.nav_logout()}
-									{/if}
-								</button>
-							</div>
-						{/if}
-					</div>
-				{:else}
-					<a href="/auth/login" class="nav-link">{m.nav_login()}</a>
-					<Button variant="primary" size="sm" onclick={() => goto('/auth/register')}>
-						{m.nav_register()}
-					</Button>
+					<a href="/dashboard" class="nav-link">{m.nav_dashboard()}</a>
+					<a href="/{user.username}" class="nav-link">My Page</a>
 				{/if}
-			</div>
+			{/if}
 		</nav>
+
+		<div class="nav-right desktop-nav">
+			{#if user}
+				<Button variant="ghost" size="sm" onclick={() => goto('/project/new')}>
+					Init project
+				</Button>
+				<div class="user-menu">
+					<button
+						class="user-button"
+						onclick={(e) => {
+							e.stopPropagation();
+							toggleMenu();
+						}}
+					>
+						{#if user.avatarUrl}
+							<img src={user.avatarUrl} alt={user.username} class="user-avatar" />
+						{:else}
+							<span class="user-initial">{user.username[0].toUpperCase()}</span>
+						{/if}
+						<span class="user-name">{user.username}</span>
+					</button>
+
+					{#if menuOpen}
+						<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
+						<div class="dropdown" onclick={(e) => e.stopPropagation()}>
+							<a href="/settings" class="dropdown-item">{m.nav_settings()}</a>
+							<button class="dropdown-item" onclick={handleLogout} disabled={loggingOut}>
+								{#if loggingOut}
+									<Loader size="sm" /> Logging out...
+								{:else}
+									{m.nav_logout()}
+								{/if}
+							</button>
+						</div>
+					{/if}
+				</div>
+			{:else}
+				<a href="/auth/login" class="nav-link">{m.nav_login()}</a>
+				<Button variant="primary" size="sm" onclick={() => goto('/auth/register')}>
+					{m.nav_register()}
+				</Button>
+			{/if}
+		</div>
 
 		<!-- Mobile hamburger -->
 		<button
@@ -183,9 +179,9 @@
 	}
 
 	.header-container {
-		display: flex;
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
 		align-items: center;
-		justify-content: space-between;
 		max-width: 1200px;
 		margin: 0 auto;
 		padding: var(--space-4);
@@ -219,17 +215,6 @@
 	}
 
 	.nav {
-		display: grid;
-		grid-template-columns: 1fr 2fr 1fr;
-		align-items: center;
-		flex: 1;
-	}
-
-	.nav-left {
-		/* vide, occupe 1fr */
-	}
-
-	.nav-center {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -404,6 +389,11 @@
 
 	/* Responsive */
 	@media (max-width: 768px) {
+		.header-container {
+			display: flex;
+			justify-content: space-between;
+		}
+
 		.desktop-nav {
 			display: none;
 		}
