@@ -7,3 +7,4 @@ const handler: RequestHandler = async ({ request }) => {
 
 export const GET = handler;
 export const POST = handler;
+export const OPTIONS = handler;
