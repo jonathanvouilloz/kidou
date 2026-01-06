@@ -176,7 +176,7 @@
 					<h3>Upgrade to Pro</h3>
 					<ul class="pro-benefits">
 						<li>Unlimited projects</li>
-						<li>Unlimited AI extractions</li>
+						<li>50 AI extractions / day</li>
 					</ul>
 					<Button variant="primary" onclick={() => (window.location.href = '/api/checkout')}>Upgrade to Pro</Button>
 				</div>
@@ -185,7 +185,7 @@
 					<p>You're on the <strong>Pro</strong> plan</p>
 					<ul class="plan-limits">
 						<li>Unlimited projects</li>
-						<li>Unlimited AI extractions</li>
+						<li>50 AI extractions / day</li>
 					</ul>
 				</div>
 
@@ -241,7 +241,7 @@
 </main>
 
 <!-- Delete Account Modal -->
-<Modal bind:open={showDeleteModal} title="Delete Account">
+<Modal bind:open={showDeleteModal} title="Delete Account" onClose={() => { deletePassword = ''; deleteError = ''; }}>
 	<p class="modal-warning">This will permanently delete your account and all your projects. This action cannot be undone.</p>
 	<div class="modal-form">
 		<Input
