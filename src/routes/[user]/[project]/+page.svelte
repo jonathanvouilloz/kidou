@@ -111,7 +111,10 @@
 					<span class="conn-label">Owner</span>
 					<span class="conn-value">USER_PROFILE</span>
 				</div>
-				<span class="owner-username">@{data.owner.username}</span>
+				<div class="owner-info">
+					<span class="owner-username">@{data.owner.username}</span>
+					<span class="see-profile-hint">See profile ›</span>
+				</div>
 			</a>
 
 			{#if data.project.liveUrl}
@@ -370,9 +373,27 @@
 		text-decoration: underline;
 	}
 
+	.owner-info {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-end;
+		gap: 2px;
+	}
+
 	.owner-username {
 		color: var(--color-success);
 		font-size: 14px;
+	}
+
+	.see-profile-hint {
+		font-size: 11px;
+		color: var(--color-success);
+		opacity: 0.6;
+		transition: opacity 0.2s;
+	}
+
+	.connection-card.profile:hover .see-profile-hint {
+		opacity: 1;
 	}
 
 	
