@@ -7,7 +7,9 @@ const anthropic = new Anthropic({
 
 const PARSE_PRD_PROMPT = `You are an assistant that analyzes project planning documents (PRDs, specs, roadmaps, notes, todo lists).
 
-OBJECTIVE: Extract the main milestones/features/phases according to the NATURAL STRUCTURE of the document.
+OBJECTIVE: Extract the main work items according to the NATURAL STRUCTURE of the document, regardless of how the author named them.
+
+LANGUAGE RULE: Keep the original language of the document. Do NOT translate. If the document is in French, output French. If in English, output English.
 
 PRINCIPLES:
 1. Adapt to the document style (formal, personal notes, bullet points, prose)
@@ -15,41 +17,49 @@ PRINCIPLES:
 3. Prioritize business/user value over technical details
 4. Respect the author's organization (don't reorganize)
 5. Capture the intent, not just words
+6. Recognize work items regardless of their naming convention
 
-POSSIBLE MILESTONE TYPES:
-- User features ("Authentication System", "PDF Export")
-- Project phases ("MVP", "Private Beta", "Public Launch")
-- Technical epics ("Infrastructure", "Backend API")
-- Modules ("Admin Dashboard", "Public Page")
-- Whatever the author defined as main sections
+RECOGNIZE ALL NAMING CONVENTIONS:
+- Milestones, Phases, Steps, Stages, Étapes
+- Features, Fonctionnalités, Functions, Capabilities
+- User Stories ("As a user, I can...")
+- Epics, Modules, Components
+- Goals, Objectives, Objectifs
+- Deliverables, Livrables
+- Sprints, Releases, Versions
+- Tasks, Tâches (when they represent major work packages)
+- Requirements, Exigences
+- Numbered sections (1., 2., 3. or Phase 1, Phase 2)
+- Any main headers or bullet points defining work scope
 
 EXTRACTION RULES:
 - Between 3 and 15 items (depending on document complexity)
 - Natural phrasing (30-80 characters)
-- Keep author's vocabulary when clear
-- One milestone = a coherent work package, not a micro-task
-- Ignore meta-info (changelog, version notes, "to discuss")
+- Keep author's vocabulary and language
+- One item = a coherent work package, not a micro-task
+- Ignore meta-info (changelog, version notes, "to discuss", comments)
 
 GOOD vs BAD EXAMPLES:
 Good: "Claude Integration via MCP"
 Bad: "MCP tools drafts"
 
-Good: "Visualization Dashboard"
-Bad: "Dashboard list drafts"
+Good: "Système d'authentification"
+Bad: "Auth TODO"
 
-Good: "Inspiration Capture System"
-Bad: "API endpoints drafts"
+Good: "User Profile Management"
+Bad: "Profile stuff"
 
 ANALYSIS:
 1. What type of document is this? (formal PRD, notes, technical specs, roadmap)
-2. What is the dominant granularity? (epic, feature, task)
-3. How has the author structured the information?
+2. What naming convention does the author use?
+3. What is the dominant granularity? (epic, feature, task)
+4. How has the author structured the information?
 
 OUTPUT FORMAT (pure JSON, no text before/after):
 {
   "milestones": [
-    "Milestone 1",
-    "Milestone 2",
+    "Item 1 in original language",
+    "Item 2 in original language",
     "..."
   ]
 }
