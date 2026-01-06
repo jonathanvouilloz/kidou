@@ -56,17 +56,23 @@
 	<div class="sections-container">
 		<ManifestoSection />
 
-		<HowItWorksSection />
+		<div id="how-it-works">
+			<HowItWorksSection />
+		</div>
 	</div>
 
-	<div class="projects-section-wrapper">
+	<div id="explore" class="projects-section-wrapper">
 		<LastProjectsSection projects={data.latestProjects} />
 	</div>
 
 	<div class="sections-container">
-		<PricingSection isLoggedIn={!!data.user} />
+		<div id="pricing">
+			<PricingSection isLoggedIn={!!data.user} />
+		</div>
 
-		<TestimonialTerminals />
+		<div id="testimonials">
+			<TestimonialTerminals />
+		</div>
 
 		<FinalCTA isLoggedIn={!!data.user} />
 	</div>
@@ -150,14 +156,14 @@
 		margin: 0 auto;
 		display: flex;
 		flex-direction: column;
-		gap: var(--space-16);
-		padding: var(--space-8) 0;
+		gap: var(--space-20);
+		padding: var(--space-16) 0;
 	}
 
 	.projects-section-wrapper {
 		max-width: 1400px;
 		margin: 0 auto;
-		padding: var(--space-8) var(--space-4);
+		padding: var(--space-16) var(--space-4);
 	}
 
 	@keyframes blink {

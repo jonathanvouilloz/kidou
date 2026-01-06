@@ -11,9 +11,10 @@
 			username: string;
 			avatarUrl?: string | null;
 		} | null;
+		isLandingPage?: boolean;
 	}
 
-	let { user = null }: Props = $props();
+	let { user = null, isLandingPage = false }: Props = $props();
 	let menuOpen = $state(false);
 	let mobileMenuOpen = $state(false);
 	let loggingOut = $state(false);
@@ -66,10 +67,17 @@
 			<div class="nav-left"></div>
 
 			<div class="nav-center">
-				<a href="/community" class="nav-link">{m.nav_explore()}</a>
-				{#if user}
-					<a href="/dashboard" class="nav-link">{m.nav_dashboard()}</a>
-					<a href="/{user.username}" class="nav-link">My Page</a>
+				{#if !user && isLandingPage}
+					<a href="#how-it-works" class="nav-link">How it works</a>
+					<a href="#explore" class="nav-link">{m.nav_explore()}</a>
+					<a href="#pricing" class="nav-link">Pricing</a>
+					<a href="#testimonials" class="nav-link">Testimonials</a>
+				{:else}
+					<a href="/community" class="nav-link">{m.nav_explore()}</a>
+					{#if user}
+						<a href="/dashboard" class="nav-link">{m.nav_dashboard()}</a>
+						<a href="/{user.username}" class="nav-link">My Page</a>
+					{/if}
 				{/if}
 			</div>
 
@@ -135,8 +143,16 @@
 		<!-- svelte-ignore a11y_click_events_have_key_events a11y_no_static_element_interactions -->
 		<div class="mobile-overlay" onclick={closeMobileMenu}></div>
 		<nav class="mobile-menu">
-			<a href="/community" class="mobile-link" onclick={closeMobileMenu}>{m.nav_explore()}</a>
-			{#if user}
+			{#if !user && isLandingPage}
+				<a href="#how-it-works" class="mobile-link" onclick={closeMobileMenu}>How it works</a>
+				<a href="#explore" class="mobile-link" onclick={closeMobileMenu}>{m.nav_explore()}</a>
+				<a href="#pricing" class="mobile-link" onclick={closeMobileMenu}>Pricing</a>
+				<a href="#testimonials" class="mobile-link" onclick={closeMobileMenu}>Testimonials</a>
+				<div class="mobile-divider"></div>
+				<a href="/auth/login" class="mobile-link" onclick={closeMobileMenu}>{m.nav_login()}</a>
+				<a href="/auth/register" class="mobile-link" onclick={closeMobileMenu}>{m.nav_register()}</a>
+			{:else if user}
+				<a href="/community" class="mobile-link" onclick={closeMobileMenu}>{m.nav_explore()}</a>
 				<a href="/dashboard" class="mobile-link" onclick={closeMobileMenu}>{m.nav_dashboard()}</a>
 				<a href="/{user.username}" class="mobile-link" onclick={closeMobileMenu}>My Page</a>
 				<a href="/project/new" class="mobile-link" onclick={closeMobileMenu}>Init project</a>
@@ -149,6 +165,7 @@
 					{/if}
 				</button>
 			{:else}
+				<a href="/community" class="mobile-link" onclick={closeMobileMenu}>{m.nav_explore()}</a>
 				<a href="/auth/login" class="mobile-link" onclick={closeMobileMenu}>{m.nav_login()}</a>
 				<a href="/auth/register" class="mobile-link" onclick={closeMobileMenu}>{m.nav_register()}</a>
 			{/if}
@@ -202,13 +219,14 @@
 	}
 
 	.nav {
-		display: flex;
+		display: grid;
+		grid-template-columns: 1fr 2fr 1fr;
 		align-items: center;
 		flex: 1;
 	}
 
 	.nav-left {
-		flex: 1;
+		/* vide, occupe 1fr */
 	}
 
 	.nav-center {
@@ -219,7 +237,6 @@
 	}
 
 	.nav-right {
-		flex: 1;
 		display: flex;
 		align-items: center;
 		justify-content: flex-end;
@@ -377,6 +394,12 @@
 	.mobile-link:hover {
 		background: var(--color-bg-hover);
 		color: var(--color-text);
+	}
+
+	.mobile-divider {
+		height: 1px;
+		background: var(--color-border);
+		margin: var(--space-2) 0;
 	}
 
 	/* Responsive */

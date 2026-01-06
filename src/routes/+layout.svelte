@@ -26,7 +26,7 @@
 </svelte:head>
 
 {#if !isAuthPage}
-	<Header user={data.user} />
+	<Header user={data.user} {isLandingPage} />
 {/if}
 
 {@render children()}
