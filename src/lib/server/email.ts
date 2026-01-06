@@ -1,7 +1,7 @@
 import { Resend } from 'resend';
 import { env } from '$env/dynamic/private';
 
-const FROM_ADDRESS = 'Kidou <noreply@notifications.kidou.app>';
+const FROM_ADDRESS = 'Kidou <noreply@notifications.kidou.dev>';
 
 // Lazy initialization to avoid build errors when RESEND_API_KEY is not set
 let resend: Resend | null = null;
