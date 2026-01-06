@@ -1,8 +1,7 @@
 import { Resend } from 'resend';
 import { env } from '$env/dynamic/private';
 
-// Use onboarding@resend.dev for testing, or noreply@yourdomain.com in production
-const FROM_ADDRESS = 'Kidou <onboarding@resend.dev>';
+const FROM_ADDRESS = 'Kidou <noreply@notifications.kidou.app>';
 
 // Lazy initialization to avoid build errors when RESEND_API_KEY is not set
 let resend: Resend | null = null;
