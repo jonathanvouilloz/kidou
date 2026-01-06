@@ -4,9 +4,9 @@
 	import Input from '$lib/components/ui/Input.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
-	import Toast from '$lib/components/ui/Toast.svelte';
 	import Modal from '$lib/components/ui/Modal.svelte';
 	import { changePassword, deleteUser } from '$lib/auth-client';
+	import { showToast } from '$lib/stores/toast';
 
 	let { data, form } = $props();
 
@@ -15,8 +15,6 @@
 	let avatarUrl = $state(data.profile.avatarUrl || '');
 	let accentColor = $state(data.profile.accentColor);
 	let saving = $state(false);
-	let showSuccess = $state(data.checkoutSuccess);
-	let showProfileSaved = $state(false);
 
 	// Password change state
 	let currentPassword = $state('');
@@ -24,7 +22,13 @@
 	let confirmPassword = $state('');
 	let passwordError = $state('');
 	let changingPassword = $state(false);
-	let showPasswordChanged = $state(false);
+
+	// Show checkout success toast on mount
+	$effect(() => {
+		if (data.checkoutSuccess) {
+			showToast('Welcome to Pro! Your subscription is now active.', 'success');
+		}
+	});
 
 	// Delete account state
 	let showDeleteModal = $state(false);
@@ -41,10 +45,7 @@
 
 	$effect(() => {
 		if (form?.success) {
-			showProfileSaved = true;
-			setTimeout(() => {
-				showProfileSaved = false;
-			}, 3000);
+			showToast('Profile updated successfully!', 'success');
 		}
 	});
 
@@ -75,10 +76,7 @@
 			currentPassword = '';
 			newPassword = '';
 			confirmPassword = '';
-			showPasswordChanged = true;
-			setTimeout(() => {
-				showPasswordChanged = false;
-			}, 3000);
+			showToast('Password changed successfully!', 'success');
 		}
 	}
 
@@ -100,18 +98,6 @@
 <svelte:head>
 	<title>Settings - Kidou</title>
 </svelte:head>
-
-{#if showSuccess}
-	<Toast message="Welcome to Pro! Your subscription is now active." type="success" onClose={() => (showSuccess = false)} />
-{/if}
-
-{#if showProfileSaved}
-	<Toast message="Profile updated successfully!" type="success" onClose={() => (showProfileSaved = false)} />
-{/if}
-
-{#if showPasswordChanged}
-	<Toast message="Password changed successfully!" type="success" onClose={() => (showPasswordChanged = false)} />
-{/if}
 
 <main class="settings">
 	<div class="container">
