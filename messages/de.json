@@ -41,5 +41,9 @@
 
   "landing_finalCta_command": "ready --build-in-public",
   "landing_finalCta_title": "Bereit, öffentlich zu bauen?",
-  "landing_finalCta_subtitle": "Schließe dich Entwicklern an, die ihre Projekte mit Stil shippen."
+  "landing_finalCta_subtitle": "Schließe dich Entwicklern an, die ihre Projekte mit Stil shippen.",
+
+  "landing_lastProjects_title": "Neueste Projekte",
+  "landing_lastProjects_seeMore": "Weitere Projekte anzeigen",
+  "landing_lastProjects_empty": "Noch keine Projekte. Sei der Erste!"
 }

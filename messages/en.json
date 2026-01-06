@@ -243,5 +243,9 @@
 
   "landing_finalCta_command": "ready --build-in-public",
   "landing_finalCta_title": "Ready to build in public?",
-  "landing_finalCta_subtitle": "Join developers who ship their projects with style."
+  "landing_finalCta_subtitle": "Join developers who ship their projects with style.",
+
+  "landing_lastProjects_title": "Latest projects",
+  "landing_lastProjects_seeMore": "See other projects",
+  "landing_lastProjects_empty": "No projects yet. Be the first to share!"
 }

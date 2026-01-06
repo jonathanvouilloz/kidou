@@ -12,6 +12,11 @@
 	// Count PRD lines
 	const prdLines = $derived(data.project.originalPrd?.split('\n').length ?? 0);
 
+	// Project state for live preview styling
+	const projectState = $derived(
+		data.progress === 0 ? 'waiting' : data.progress >= 100 ? 'done' : 'building'
+	);
+
 	// Format date
 	function formatDate(date: Date | null) {
 		if (!date) return null;
@@ -101,6 +106,24 @@
 
 		<!-- Links Panel -->
 		<div class="panel links-panel" data-label="NETWORK_INTERFACES">
+			<a href="/{data.owner.username}" class="connection-card profile">
+				<div class="conn-info">
+					<span class="conn-label">Owner</span>
+					<span class="conn-value">USER_PROFILE</span>
+				</div>
+				<span class="owner-username">@{data.owner.username}</span>
+			</a>
+
+			{#if data.project.liveUrl}
+				<a href={data.project.liveUrl} target="_blank" rel="noopener" class="connection-card live-{projectState}">
+					<div class="conn-info">
+						<span class="conn-label">Deployment</span>
+						<span class="conn-value">LIVE_PREVIEW</span>
+					</div>
+					<div class="status-light {projectState}"></div>
+				</a>
+			{/if}
+
 			{#if data.project.githubUrl}
 				<a href={data.project.githubUrl} target="_blank" rel="noopener" class="connection-card">
 					<div class="conn-info">
@@ -112,24 +135,6 @@
 					</svg>
 				</a>
 			{/if}
-
-			{#if data.project.liveUrl}
-				<a href={data.project.liveUrl} target="_blank" rel="noopener" class="connection-card active">
-					<div class="conn-info">
-						<span class="conn-label">Deployment</span>
-						<span class="conn-value">LIVE_PREVIEW</span>
-					</div>
-					<div class="status-light on"></div>
-				</a>
-			{/if}
-
-			<a href="/{data.owner.username}" class="connection-card">
-				<div class="conn-info">
-					<span class="conn-label">Owner</span>
-					<span class="conn-value">USER_PROFILE</span>
-				</div>
-				<span class="owner-username">@{data.owner.username}</span>
-			</a>
 
 			{#if !data.project.githubUrl && !data.project.liveUrl}
 				<div class="no-links">
@@ -398,7 +403,42 @@
 		background: #161616;
 	}
 
-	.connection-card.active {
+	.connection-card.profile {
+		background: rgba(0, 255, 65, 0.1);
+		border-color: var(--color-success);
+	}
+
+	.connection-card.profile:hover {
+		background: rgba(0, 255, 65, 0.15);
+	}
+
+	.connection-card.live-waiting {
+		background: transparent;
+		border-color: #ff5f56;
+	}
+
+	.connection-card.live-waiting:hover {
+		background: rgba(255, 95, 86, 0.1);
+		border-color: #ff5f56;
+	}
+
+	.connection-card.live-building {
+		background: transparent;
+		border-color: #f1c40f;
+	}
+
+	.connection-card.live-building:hover {
+		background: rgba(241, 196, 15, 0.1);
+		border-color: #f1c40f;
+	}
+
+	.connection-card.live-done {
+		background: transparent;
+		border-color: var(--color-success);
+	}
+
+	.connection-card.live-done:hover {
+		background: rgba(0, 255, 65, 0.1);
 		border-color: var(--color-success);
 	}
 
@@ -426,7 +466,17 @@
 		border-radius: 50%;
 	}
 
-	.status-light.on {
+	.status-light.waiting {
+		background: #ff5f56;
+		box-shadow: 0 0 8px #ff5f56;
+	}
+
+	.status-light.building {
+		background: #f1c40f;
+		box-shadow: 0 0 8px #f1c40f;
+	}
+
+	.status-light.done {
 		background: var(--color-success);
 		box-shadow: 0 0 8px var(--color-success);
 	}

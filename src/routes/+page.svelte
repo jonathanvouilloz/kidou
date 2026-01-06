@@ -8,6 +8,7 @@
 	import PricingSection from '$lib/components/landing/PricingSection.svelte';
 	import TestimonialTerminals from '$lib/components/landing/TestimonialTerminals.svelte';
 	import FinalCTA from '$lib/components/landing/FinalCTA.svelte';
+	import LastProjectsSection from '$lib/components/landing/LastProjectsSection.svelte';
 	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
@@ -56,7 +57,13 @@
 		<ManifestoSection />
 
 		<HowItWorksSection />
+	</div>
 
+	<div class="projects-section-wrapper">
+		<LastProjectsSection projects={data.latestProjects} />
+	</div>
+
+	<div class="sections-container">
 		<PricingSection isLoggedIn={!!data.user} />
 
 		<TestimonialTerminals />
@@ -145,6 +152,12 @@
 		flex-direction: column;
 		gap: var(--space-16);
 		padding: var(--space-8) 0;
+	}
+
+	.projects-section-wrapper {
+		max-width: 1400px;
+		margin: 0 auto;
+		padding: var(--space-8) var(--space-4);
 	}
 
 	@keyframes blink {
