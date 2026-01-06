@@ -217,9 +217,7 @@
 					on the {data.userPlan === 'free' ? 'Free' : 'Pro'} plan.
 				</p>
 				<div class="limit-actions">
-					<Button variant="primary" onclick={() => goto('/settings')}>
-						Upgrade to Pro
-					</Button>
+					<span class="coming-soon">Pro plan coming soon</span>
 					<Button variant="ghost" onclick={() => goto('/dashboard')}>
 						← Dashboard
 					</Button>
@@ -332,9 +330,7 @@
 							<Button type="button" variant="primary" onclick={handleSkipToManual}>
 								Add milestones manually
 							</Button>
-							<Button type="button" variant="ghost" onclick={() => goto('/settings')}>
-								Upgrade to Pro
-							</Button>
+							<span class="coming-soon">Pro coming soon</span>
 						</div>
 					</div>
 				{/if}
@@ -581,5 +577,11 @@
 	.limit-buttons {
 		display: flex;
 		gap: var(--space-3);
+	}
+
+	.coming-soon {
+		font-size: var(--text-sm);
+		color: var(--color-text-muted);
+		padding: var(--space-2) var(--space-3);
 	}
 </style>

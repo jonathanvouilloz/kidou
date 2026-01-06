@@ -27,7 +27,7 @@
 			{#if data.canCreateProject}
 				<Button variant="primary" onclick={() => goto('/project/new')}>{m.dashboard_newProject()}</Button>
 			{:else}
-				<Button variant="primary" onclick={() => goto('/api/checkout')}>Upgrade to Pro</Button>
+				<Badge variant="default">Coming soon</Badge>
 			{/if}
 		</header>
 

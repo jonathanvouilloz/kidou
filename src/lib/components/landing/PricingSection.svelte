@@ -82,9 +82,7 @@
 				</ul>
 			</div>
 			<div class="pricing-footer">
-				<Button onclick={() => goto(isLoggedIn ? '/api/checkout' : '/auth/register')}>
-					{m.landing_pricing_proButton()}
-				</Button>
+				<span class="coming-soon">Coming soon</span>
 			</div>
 		</div>
 	</div>
@@ -208,6 +206,14 @@
 
 	.pricing-footer :global(button) {
 		width: 100%;
+	}
+
+	.coming-soon {
+		display: block;
+		text-align: center;
+		font-size: var(--text-sm);
+		color: var(--color-text-muted);
+		padding: var(--space-2) 0;
 	}
 
 	@media (max-width: 600px) {
