@@ -18,7 +18,7 @@ export const auth = betterAuth({
 	}),
 	secret: BETTER_AUTH_SECRET,
 	baseURL: PUBLIC_APP_URL,
-	trustedOrigins: [PUBLIC_APP_URL, 'https://www.kidou.dev'],
+	trustedOrigins: [PUBLIC_APP_URL, 'https://kidou.dev', 'https://www.kidou.dev'],
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
