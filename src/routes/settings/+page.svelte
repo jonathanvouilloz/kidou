@@ -102,15 +102,15 @@
 </svelte:head>
 
 {#if showSuccess}
-	<Toast message="Welcome to Pro! Your subscription is now active." type="success" onclose={() => (showSuccess = false)} />
+	<Toast message="Welcome to Pro! Your subscription is now active." type="success" onClose={() => (showSuccess = false)} />
 {/if}
 
 {#if showProfileSaved}
-	<Toast message="Profile updated successfully!" type="success" onclose={() => (showProfileSaved = false)} />
+	<Toast message="Profile updated successfully!" type="success" onClose={() => (showProfileSaved = false)} />
 {/if}
 
 {#if showPasswordChanged}
-	<Toast message="Password changed successfully!" type="success" onclose={() => (showPasswordChanged = false)} />
+	<Toast message="Password changed successfully!" type="success" onClose={() => (showPasswordChanged = false)} />
 {/if}
 
 <main class="settings">
