@@ -18,6 +18,7 @@ export const auth = betterAuth({
 	}),
 	secret: BETTER_AUTH_SECRET,
 	baseURL: PUBLIC_APP_URL,
+	trustedOrigins: [PUBLIC_APP_URL],
 	emailAndPassword: {
 		enabled: true,
 		requireEmailVerification: true,
