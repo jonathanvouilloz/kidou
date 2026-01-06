@@ -8,7 +8,7 @@ export const PLAN_LIMITS = {
 		maxLlmExtractions: 1
 	},
 	pro: {
-		maxProjects: 5,
+		maxProjects: Infinity,
 		maxLlmExtractions: 50
 	}
 } as const;

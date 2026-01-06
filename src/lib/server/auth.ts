@@ -4,7 +4,12 @@ import { db } from './db';
 import * as schema from './db/schema';
 import { BETTER_AUTH_SECRET } from '$env/static/private';
 import { PUBLIC_APP_URL } from '$env/static/public';
-import { sendEmail, getVerificationEmailHtml, getPasswordResetEmailHtml } from './email';
+import {
+	sendEmail,
+	getVerificationEmailHtml,
+	getPasswordResetEmailHtml,
+	getDeleteAccountEmailHtml
+} from './email';
 
 export const auth = betterAuth({
 	database: drizzleAdapter(db, {
@@ -58,6 +63,16 @@ export const auth = betterAuth({
 				type: 'string',
 				required: false,
 				defaultValue: '#FFFFFF'
+			}
+		},
+		deleteUser: {
+			enabled: true,
+			sendDeleteAccountVerification: async ({ user, url }) => {
+				void sendEmail({
+					to: user.email,
+					subject: 'Confirm account deletion - Kidou',
+					html: getDeleteAccountEmailHtml(url, user.name ?? user.email)
+				});
 			}
 		}
 	},

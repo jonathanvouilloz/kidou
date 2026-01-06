@@ -17,7 +17,11 @@
 		<header class="dashboard-header">
 			<div class="header-left">
 				<h1>{m.dashboard_title()}</h1>
-				<Badge variant="default">{m.dashboard_projectCount({ count: data.projectCount, max: data.maxProjects })}</Badge>
+				{#if data.maxProjects === Infinity}
+					<Badge variant="default">{data.projectCount} projects</Badge>
+				{:else}
+					<Badge variant="default">{m.dashboard_projectCount({ count: data.projectCount, max: data.maxProjects })}</Badge>
+				{/if}
 			</div>
 
 			{#if data.canCreateProject}
