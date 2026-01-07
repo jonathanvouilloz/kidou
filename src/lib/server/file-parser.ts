@@ -23,9 +23,10 @@ export async function extractTextFromFile(
 			return buffer.toString('utf-8');
 
 		case 'pdf': {
-			const parser = new PDFParse();
-			const pdfData = await parser.loadBuffer(buffer);
-			return pdfData.text;
+			const parser = new PDFParse({ data: buffer });
+			const result = await parser.getText();
+			await parser.destroy();
+			return result.text;
 		}
 
 		case 'docx': {
