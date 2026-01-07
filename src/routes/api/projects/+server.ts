@@ -104,42 +104,39 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		slug = `${baseSlug}-${slugSuffix}`;
 	}
 
-	// Create project and milestones in transaction
+	// Create project and milestones
 	try {
-		const result = await db.transaction(async (tx) => {
-			// Insert project
-			const [project] = await tx
-				.insert(projects)
-				.values({
-					userId: locals.user!.id,
-					name: name.trim(),
-					slug,
-					description: description?.trim() || null,
-					originalPrd,
-					stack: stack?.filter((s) => s.trim()) || null,
-					deadline: deadline ? new Date(deadline) : null,
-					githubUrl: githubUrl?.trim() || null,
-					liveUrl: liveUrl?.trim() || null,
-					isPublic: true,
-					isCompleted: false
-				})
-				.returning({ id: projects.id, slug: projects.slug, name: projects.name });
+		// Insert project
+		const [project] = await db
+			.insert(projects)
+			.values({
+				userId: locals.user!.id,
+				name: name.trim(),
+				slug,
+				description: description?.trim() || null,
+				originalPrd,
+				stack: stack?.filter((s) => s.trim()) || null,
+				deadline: deadline ? new Date(deadline) : null,
+				githubUrl: githubUrl?.trim() || null,
+				liveUrl: liveUrl?.trim() || null,
+				isPublic: true,
+				isCompleted: false
+			})
+			.returning({ id: projects.id, slug: projects.slug, name: projects.name });
 
-			// Insert milestones
-			await tx.insert(milestones).values(
-				milestoneTitles.map((title, index) => ({
-					projectId: project.id,
-					title: title.trim(),
-					position: index + 1,
-					isCompleted: false
-				}))
-			);
+		// Insert milestones
+		await db.insert(milestones).values(
+			milestoneTitles.map((title, index) => ({
+				projectId: project.id,
+				title: title.trim(),
+				position: index + 1,
+				isCompleted: false
+			}))
+		);
 
-			return project;
-		});
-
-		return json(result, { status: 201 });
+		return json(project, { status: 201 });
 	} catch (err) {
+		console.error('Project creation error:', err);
 		throw error(500, { message: 'Erreur lors de la création du projet' });
 	}
 };

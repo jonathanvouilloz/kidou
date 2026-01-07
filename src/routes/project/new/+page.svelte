@@ -6,6 +6,7 @@
 	import Loader from '$lib/components/ui/Loader.svelte';
 	import TagInput from '$lib/components/ui/TagInput.svelte';
 	import EditableMilestoneList from '$lib/components/project/EditableMilestoneList.svelte';
+	import TerminalBootOverlay from '$lib/components/terminal/TerminalBootOverlay.svelte';
 	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
@@ -36,6 +37,7 @@
 	// Step 2 state
 	let milestones = $state<Milestone[]>([]);
 	let creating = $state(false);
+	let showBootOverlay = $state(false);
 	let createError = $state('');
 
 	async function handleAnalyze(e: SubmitEvent) {
@@ -108,9 +110,13 @@
 		}
 
 		creating = true;
+		showBootOverlay = true;
 
 		try {
-			const res = await fetch('/api/projects', {
+			// Run API call and minimum delay in parallel
+			const minDelay = new Promise((r) => setTimeout(r, 2500));
+
+			const apiCall = fetch('/api/projects', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({
@@ -125,15 +131,18 @@
 				})
 			});
 
+			const [res] = await Promise.all([apiCall, minDelay]);
 			const data = await res.json();
 
 			if (!res.ok) {
+				showBootOverlay = false;
 				createError = data.message || m.project_createError();
 				return;
 			}
 
 			await goto(`/project/${data.id}`);
 		} catch {
+			showBootOverlay = false;
 			createError = m.project_connectionError();
 		} finally {
 			creating = false;
@@ -205,6 +214,8 @@
 <svelte:head>
 	<title>{m.project_newTitle()} - Kidou</title>
 </svelte:head>
+
+<TerminalBootOverlay open={showBootOverlay} projectName={projectName} />
 
 <main class="new-project">
 	<div class="container">
