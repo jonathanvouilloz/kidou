@@ -61,8 +61,13 @@
 				</nav>
 				<h1 class="project-title">Project_{data.project.name.replace(/\s+/g, '_')}</h1>
 			</div>
-			<div class="status-badge" class:done={data.project.isCompleted}>
-				{data.project.isCompleted ? 'SYSTEM READY' : 'BUILDING'}
+			<div class="header-actions">
+				{#if data.user?.id === data.owner.id}
+					<a href="/project/{data.project.id}" class="edit-btn">Edit</a>
+				{/if}
+				<div class="status-badge" class:done={data.project.isCompleted}>
+					{data.project.isCompleted ? 'SYSTEM READY' : 'BUILDING'}
+				</div>
 			</div>
 		</header>
 
@@ -295,6 +300,29 @@
 		text-transform: uppercase;
 		letter-spacing: -1px;
 		text-shadow: 0 0 20px rgba(0, 255, 65, 0.2);
+	}
+
+	.header-actions {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+	}
+
+	.edit-btn {
+		background: transparent;
+		border: 1px solid var(--color-text-muted);
+		color: var(--color-text-muted);
+		padding: 5px 15px;
+		font-size: 12px;
+		font-weight: bold;
+		letter-spacing: 1px;
+		text-decoration: none;
+		transition: all 0.2s;
+	}
+
+	.edit-btn:hover {
+		border-color: var(--color-success);
+		color: var(--color-success);
 	}
 
 	.status-badge {
