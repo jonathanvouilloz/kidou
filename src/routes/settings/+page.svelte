@@ -164,7 +164,7 @@
 						<li>Unlimited projects</li>
 						<li>50 AI extractions / day</li>
 					</ul>
-					<Badge variant="default">Coming soon</Badge>
+					<Button variant="primary" onclick={() => (window.location.href = '/api/checkout')}>Upgrade to Pro</Button>
 				</div>
 			{:else}
 				<div class="plan-info">
@@ -175,7 +175,7 @@
 					</ul>
 				</div>
 
-				<Badge variant="default">Coming soon</Badge>
+				<Button variant="secondary" onclick={() => (window.location.href = '/api/portal')}>Manage Subscription</Button>
 			{/if}
 		</section>
 
