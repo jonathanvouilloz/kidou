@@ -232,11 +232,28 @@
 
 <main class="project-page">
 	<div class="container">
-		<nav class="breadcrumb">
-			<Button variant="ghost" size="sm" onclick={() => goto('/dashboard')}>
-				← {m.projectView_backToDashboard()}
-			</Button>
-		</nav>
+		<div class="top-bar">
+			<nav class="breadcrumb">
+				<Button variant="ghost" size="sm" onclick={() => goto('/dashboard')}>
+					← {m.projectView_backToDashboard()}
+				</Button>
+			</nav>
+			{#if hasChanges}
+				<div class="top-actions">
+					<Button variant="ghost" size="sm" onclick={handleCancel} disabled={saving}>
+						{m.common_cancel()}
+					</Button>
+					<Button variant="primary" size="sm" onclick={handleSave} disabled={saving}>
+						{#if saving}
+							<Loader size="sm" />
+							{m.projectView_saving()}
+						{:else}
+							{m.projectView_saveChanges({ count: changedCount })}
+						{/if}
+					</Button>
+				</div>
+			{/if}
+		</div>
 
 		<ProjectHeader
 			name={data.project.name}
@@ -298,12 +315,6 @@
 			<h2 class="section-title">{m.projectView_milestones()}</h2>
 			<MilestoneList {milestones} onToggle={handleToggle} onAdd={handleAddMilestone} />
 
-			<div class="project-actions-row">
-				<Button variant="danger" size="sm" onclick={handleDelete} disabled={deleting}>
-					{deleting ? 'Deleting...' : 'Delete project'}
-				</Button>
-			</div>
-
 			{#if hasChanges}
 				<div class="actions-bar">
 					<Button variant="ghost" onclick={handleCancel} disabled={saving}>
@@ -319,6 +330,12 @@
 					</Button>
 				</div>
 			{/if}
+
+			<div class="project-actions-row">
+				<Button variant="danger" size="sm" onclick={handleDelete} disabled={deleting}>
+					{deleting ? 'Deleting...' : 'Delete project'}
+				</Button>
+			</div>
 		</section>
 	</div>
 </main>
@@ -337,8 +354,25 @@
 		margin: 0 auto;
 	}
 
-	.breadcrumb {
+	.top-bar {
+		position: sticky;
+		top: 0;
+		z-index: 10;
+		background: var(--color-bg);
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-bottom: var(--space-4);
 		margin-bottom: var(--space-4);
+	}
+
+	.top-actions {
+		display: flex;
+		gap: var(--space-3);
+	}
+
+	.breadcrumb {
+		/* margin géré par .top-bar */
 	}
 
 	.project-details-accordion {
