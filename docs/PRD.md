@@ -176,4 +176,4 @@ Terminal-first. Minimaliste. Dark mode only.
 
 ---
 
-*Document de référence pour le développement de Kidou.*
+*Document de référence pour le développement de Kidou*
