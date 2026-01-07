@@ -1,4 +1,4 @@
-import { extractText } from 'unpdf';
+import PDFParser from 'pdf2json';
 import mammoth from 'mammoth';
 
 const SUPPORTED_EXTENSIONS = ['txt', 'md', 'pdf', 'docx'] as const;
@@ -23,8 +23,17 @@ export async function extractTextFromFile(
 			return buffer.toString('utf-8');
 
 		case 'pdf': {
-			const { text } = await extractText(buffer);
-			return text;
+			return new Promise((resolve, reject) => {
+				const pdfParser = new PDFParser();
+				pdfParser.on('pdfParser_dataReady', () => {
+					const text = pdfParser.getRawTextContent();
+					resolve(text);
+				});
+				pdfParser.on('pdfParser_dataError', (err: { parserError: Error }) => {
+					reject(err.parserError);
+				});
+				pdfParser.parseBuffer(buffer);
+			});
 		}
 
 		case 'docx': {
