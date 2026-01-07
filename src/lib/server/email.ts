@@ -23,26 +23,38 @@ interface SendEmailParams {
 }
 
 export async function sendEmail({ to, subject, html }: SendEmailParams) {
-	try {
-		const client = getResend();
-		const { data, error } = await client.emails.send({
-			from: FROM_ADDRESS,
-			to,
-			subject,
-			html,
-			text: html.replace(/<[^>]*>/g, '')
-		});
+	const client = getResend();
+	const maxRetries = 3;
 
-		if (error) {
-			console.error('Failed to send email:', error);
-			return { success: false, error };
+	for (let attempt = 1; attempt <= maxRetries; attempt++) {
+		try {
+			const { data, error } = await client.emails.send({
+				from: FROM_ADDRESS,
+				to,
+				subject,
+				html,
+				text: html.replace(/<[^>]*>/g, '')
+			});
+
+			if (error) {
+				// API error (not network) - don't retry
+				console.error('Failed to send email:', error);
+				return { success: false, error };
+			}
+
+			return { success: true, data };
+		} catch (err) {
+			console.error(`Email sending error (attempt ${attempt}/${maxRetries}):`, err);
+			if (attempt < maxRetries) {
+				// Wait before retry (exponential backoff: 500ms, 1000ms)
+				await new Promise((r) => setTimeout(r, attempt * 500));
+			} else {
+				return { success: false, error: err };
+			}
 		}
-
-		return { success: true, data };
-	} catch (err) {
-		console.error('Email sending error:', err);
-		return { success: false, error: err };
 	}
+
+	return { success: false, error: new Error('Max retries reached') };
 }
 
 export function getVerificationEmailHtml(url: string, username: string): string {
