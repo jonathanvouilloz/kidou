@@ -1,8 +1,14 @@
 <script lang="ts">
+	import ShareButton from '$lib/components/share/ShareButton.svelte';
+	import ShareModal from '$lib/components/share/ShareModal.svelte';
+
 	let { data } = $props();
 
 	// Active tab state
 	let activeTab = $state<'output' | 'error' | 'commits'>('output');
+
+	// Share modal state
+	let shareModalOpen = $state(false);
 
 	// Calculate days since creation
 	const daysSinceCreation = $derived(
@@ -40,9 +46,13 @@
 		content="Progression: {data.progress}% ({data.completedCount}/{data.totalCount} milestones)"
 	/>
 	<meta property="og:type" content="article" />
-	<meta name="twitter:card" content="summary" />
+	<meta property="og:image" content="https://kidou.app/api/og/{data.owner.username}/{data.project.slug}" />
+	<meta property="og:image:width" content="1200" />
+	<meta property="og:image:height" content="630" />
+	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:title" content="{data.project.name} | {data.owner.username}" />
 	<meta name="twitter:description" content="Progression: {data.progress}%" />
+	<meta name="twitter:image" content="https://kidou.app/api/og/{data.owner.username}/{data.project.slug}" />
 </svelte:head>
 
 <main class="project-detail">
@@ -62,6 +72,7 @@
 				<h1 class="project-title">Project_{data.project.name.replace(/\s+/g, '_')}</h1>
 			</div>
 			<div class="header-actions">
+				<ShareButton onclick={() => shareModalOpen = true} />
 				{#if data.user?.id === data.owner.id}
 					<a href="/project/{data.project.id}" class="edit-btn">Edit</a>
 				{/if}
@@ -212,6 +223,16 @@
 		</div>
 	</div>
 </main>
+
+<ShareModal
+	bind:open={shareModalOpen}
+	username={data.owner.username}
+	projectSlug={data.project.slug}
+	projectName={data.project.name}
+	progress={data.progress}
+	completedCount={data.completedCount}
+	totalCount={data.totalCount}
+/>
 
 <style>
 	.project-detail {
