@@ -42,6 +42,7 @@ export async function sendEmail({ to, subject, html }: SendEmailParams) {
 				return { success: false, error };
 			}
 
+			console.log('Email sent successfully:', { id: data?.id, to });
 			return { success: true, data };
 		} catch (err) {
 			console.error(`Email sending error (attempt ${attempt}/${maxRetries}):`, err);
