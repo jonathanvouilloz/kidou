@@ -23,9 +23,11 @@
 	}: Props = $props();
 
 	// Construct URLs
-	const baseUrl = $derived(`https://kidou.app/${username}/${projectSlug}`);
-	const ogImageUrl = $derived(`https://kidou.app/api/og/${username}/${projectSlug}`);
-	const hdImageUrl = $derived(`${ogImageUrl}?format=hd`);
+	// Production URL for sharing (what appears in tweets)
+	const prodBaseUrl = $derived(`https://kidou.app/${username}/${projectSlug}`);
+	// Local URL for preview (works in dev and prod)
+	const localOgImageUrl = $derived(`/api/og/${username}/${projectSlug}`);
+	const hdImageUrl = $derived(`${localOgImageUrl}?format=hd`);
 
 	// Share data
 	const shareData = $derived<ShareData>({
@@ -33,7 +35,7 @@
 		progress,
 		completedCount,
 		totalCount,
-		url: baseUrl
+		url: prodBaseUrl
 	});
 
 	// Twitter share URL
@@ -43,7 +45,7 @@
 	let copied = $state(false);
 
 	async function copyLink() {
-		await navigator.clipboard.writeText(baseUrl);
+		await navigator.clipboard.writeText(prodBaseUrl);
 		copied = true;
 		setTimeout(() => (copied = false), 2000);
 	}
@@ -67,7 +69,7 @@
 			<div class="preview-section">
 				<div class="preview-label">Preview</div>
 				<div class="preview-container">
-					<img src={ogImageUrl} alt="OG Preview" class="preview-image" />
+					<img src={localOgImageUrl} alt="OG Preview" class="preview-image" />
 				</div>
 			</div>
 
