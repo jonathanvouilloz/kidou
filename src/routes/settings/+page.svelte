@@ -7,8 +7,12 @@
 	import Modal from '$lib/components/ui/Modal.svelte';
 	import { authClient, changePassword, deleteUser } from '$lib/auth-client';
 	import { showToast } from '$lib/stores/toast';
+	import Loader from '$lib/components/ui/Loader.svelte';
 
 	let { data, form } = $props();
+
+	// Polar loading state
+	let polarLoading = $state(false);
 
 	// Profile state
 	let username = $state(data.profile.username);
@@ -164,18 +168,16 @@
 						<li>Unlimited projects</li>
 						<li>50 AI extractions / day</li>
 					</ul>
-					<Button variant="primary" onclick={async () => {
-					console.log('[Checkout] Button clicked');
-					console.log('[Checkout] authClient:', authClient);
-					console.log('[Checkout] authClient.checkout:', authClient.checkout);
+					<Button variant="primary" disabled={polarLoading} onclick={async () => {
+					polarLoading = true;
 					try {
-						const result = await authClient.checkout({ slug: 'pro' });
-						console.log('[Checkout] Result:', result);
+						await authClient.checkout({ slug: 'pro' });
 					} catch (err) {
 						console.error('[Checkout] Error:', err);
 						showToast('Unable to start checkout. Please try again.', 'error');
+						polarLoading = false;
 					}
-				}}>Upgrade to Pro</Button>
+				}}>{polarLoading ? 'Redirecting...' : 'Upgrade to Pro'}</Button>
 				</div>
 			{:else}
 				<div class="plan-info">
@@ -186,14 +188,16 @@
 					</ul>
 				</div>
 
-				<Button variant="secondary" onclick={async () => {
+				<Button variant="secondary" disabled={polarLoading} onclick={async () => {
+				polarLoading = true;
 				try {
 					await authClient.customer.portal();
 				} catch (err) {
 					console.error('[Portal] Error:', err);
 					showToast('Unable to open subscription portal. Please try again.', 'error');
+					polarLoading = false;
 				}
-			}}>Manage Subscription</Button>
+			}}>{polarLoading ? 'Redirecting...' : 'Manage Subscription'}</Button>
 			{/if}
 		</section>
 
@@ -243,6 +247,16 @@
 		</section>
 	</div>
 </main>
+
+<!-- Loading Overlay -->
+{#if polarLoading}
+	<div class="loading-overlay">
+		<div class="loading-content">
+			<Loader size="lg" />
+			<p>Redirecting to Polar...</p>
+		</div>
+	</div>
+{/if}
 
 <!-- Delete Account Modal -->
 <Modal bind:open={showDeleteModal} title="Delete Account" onClose={() => { deletePassword = ''; deleteError = ''; }}>
@@ -430,6 +444,32 @@
 
 	.modal-form {
 		margin-bottom: var(--space-2);
+	}
+
+	/* Loading Overlay */
+	.loading-overlay {
+		position: fixed;
+		inset: 0;
+		background: rgba(0, 0, 0, 0.8);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		z-index: 1000;
+		backdrop-filter: blur(4px);
+	}
+
+	.loading-content {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: var(--space-4);
+		color: var(--color-text);
+	}
+
+	.loading-content p {
+		font-family: var(--font-mono);
+		font-size: var(--text-sm);
+		color: var(--color-text-secondary);
 	}
 
 	@media (max-width: 768px) {
