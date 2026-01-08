@@ -164,7 +164,14 @@
 						<li>Unlimited projects</li>
 						<li>50 AI extractions / day</li>
 					</ul>
-					<Button variant="primary" onclick={() => authClient.checkout({ slug: 'pro' })}>Upgrade to Pro</Button>
+					<Button variant="primary" onclick={async () => {
+					try {
+						await authClient.checkout({ slug: 'pro' });
+					} catch (err) {
+						console.error('[Checkout] Error:', err);
+						showToast('Unable to start checkout. Please try again.', 'error');
+					}
+				}}>Upgrade to Pro</Button>
 				</div>
 			{:else}
 				<div class="plan-info">
@@ -175,7 +182,14 @@
 					</ul>
 				</div>
 
-				<Button variant="secondary" onclick={() => authClient.customer.portal()}>Manage Subscription</Button>
+				<Button variant="secondary" onclick={async () => {
+				try {
+					await authClient.customer.portal();
+				} catch (err) {
+					console.error('[Portal] Error:', err);
+					showToast('Unable to open subscription portal. Please try again.', 'error');
+				}
+			}}>Manage Subscription</Button>
 			{/if}
 		</section>
 
