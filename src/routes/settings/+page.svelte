@@ -5,7 +5,7 @@
 	import Button from '$lib/components/ui/Button.svelte';
 	import Badge from '$lib/components/ui/Badge.svelte';
 	import Modal from '$lib/components/ui/Modal.svelte';
-	import { changePassword, deleteUser } from '$lib/auth-client';
+	import { authClient, changePassword, deleteUser } from '$lib/auth-client';
 	import { showToast } from '$lib/stores/toast';
 
 	let { data, form } = $props();
@@ -164,7 +164,7 @@
 						<li>Unlimited projects</li>
 						<li>50 AI extractions / day</li>
 					</ul>
-					<Button variant="primary" onclick={() => (window.location.href = '/api/checkout')}>Upgrade to Pro</Button>
+					<Button variant="primary" onclick={() => authClient.checkout({ slug: 'pro' })}>Upgrade to Pro</Button>
 				</div>
 			{:else}
 				<div class="plan-info">
@@ -175,7 +175,7 @@
 					</ul>
 				</div>
 
-				<Button variant="secondary" onclick={() => (window.location.href = '/api/portal')}>Manage Subscription</Button>
+				<Button variant="secondary" onclick={() => authClient.customer.portal()}>Manage Subscription</Button>
 			{/if}
 		</section>
 
