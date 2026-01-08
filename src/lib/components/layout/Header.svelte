@@ -58,8 +58,7 @@
 <header class="header">
 	<div class="header-container">
 		<a href="/" class="logo">
-			<img src="/kidoulogo.png" alt="Kidou" class="logo-icon" />
-			kidou<span class="logo-cursor">_</span>
+			<img src="/kidoulogo.png" alt="Kidou" class="logo-icon" /><span class="logo-text">kidou<span class="logo-cursor">_</span></span>
 		</a>
 
 		<!-- Desktop nav -->
