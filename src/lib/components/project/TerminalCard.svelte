@@ -46,7 +46,11 @@
 </script>
 
 <a {href} class="terminal-link">
-	<div class="terminal-window state-{state}">
+	<div class="card-wrapper">
+		<div class="project-label state-{state}">
+			<span class="label-text">{name.toUpperCase().replace(/\s+/g, '_')}</span>
+		</div>
+		<div class="terminal-window state-{state}">
 		<div class="terminal-header">
 			<div class="dots">
 				<span class="dot"></span>
@@ -54,7 +58,6 @@
 				<span class="dot"></span>
 			</div>
 			<div class="meta-info">
-				<span class="meta-name">{name.toUpperCase().replace(/\s+/g, '_')}</span>
 				{#if formattedDeadline}
 					<span>DEADLINE: {formattedDeadline}</span>
 				{/if}
@@ -104,6 +107,7 @@
 			<span class="see-project">See project ›</span>
 		</div>
 	</div>
+	</div>
 </a>
 
 <style>
@@ -113,6 +117,46 @@
 		color: inherit;
 		width: 100%;
 		max-width: 420px;
+	}
+
+	.card-wrapper {
+		display: flex;
+		flex-direction: column;
+		gap: 8px;
+	}
+
+	.project-label {
+		align-self: flex-start;
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border);
+		padding: 6px 16px;
+		border-radius: 4px;
+		margin-left: 12px;
+		transition: border-color 0.2s, box-shadow 0.2s;
+	}
+
+	.project-label.state-building {
+		border-color: #f1c40f;
+	}
+
+	.project-label.state-done {
+		border-color: #00ff41;
+		box-shadow: 0 0 8px rgba(0, 255, 65, 0.2);
+	}
+
+	.terminal-link:hover .project-label {
+		border-color: #555;
+	}
+
+	.terminal-link:hover .project-label.state-done {
+		border-color: #00ff41;
+	}
+
+	.label-text {
+		font-size: 14px;
+		font-weight: 700;
+		color: var(--color-text);
+		letter-spacing: 0.5px;
 	}
 
 	.terminal-window {
@@ -184,10 +228,6 @@
 		gap: 12px;
 		font-weight: 600;
 		text-transform: uppercase;
-	}
-
-	.meta-name {
-		color: var(--color-text-muted);
 	}
 
 	/* Status colors */
@@ -351,6 +391,15 @@
 	@media (max-width: 480px) {
 		.terminal-window {
 			height: 320px;
+		}
+
+		.project-label {
+			padding: 4px 12px;
+			margin-left: 8px;
+		}
+
+		.label-text {
+			font-size: 12px;
 		}
 
 		.terminal-body {
