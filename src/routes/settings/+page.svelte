@@ -165,8 +165,12 @@
 						<li>50 AI extractions / day</li>
 					</ul>
 					<Button variant="primary" onclick={async () => {
+					console.log('[Checkout] Button clicked');
+					console.log('[Checkout] authClient:', authClient);
+					console.log('[Checkout] authClient.checkout:', authClient.checkout);
 					try {
-						await authClient.checkout({ slug: 'pro' });
+						const result = await authClient.checkout({ slug: 'pro' });
+						console.log('[Checkout] Result:', result);
 					} catch (err) {
 						console.error('[Checkout] Error:', err);
 						showToast('Unable to start checkout. Please try again.', 'error');
