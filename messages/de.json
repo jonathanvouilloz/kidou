@@ -45,5 +45,9 @@
 
   "landing_lastProjects_title": "Neueste Projekte",
   "landing_lastProjects_seeMore": "Weitere Projekte anzeigen",
-  "landing_lastProjects_empty": "Noch keine Projekte. Sei der Erste!"
+  "landing_lastProjects_empty": "Noch keine Projekte. Sei der Erste!",
+
+  "auth_continueCreating": "Melde dich an, um dein Projekt weiterzuerstellen",
+  "project_dataRestored": "Deine Projektdaten wurden wiederhergestellt",
+  "auth_registeringHint": "Dies kann einige Sekunden dauern..."
 }

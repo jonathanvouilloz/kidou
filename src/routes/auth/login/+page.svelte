@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto, invalidateAll } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { signIn } from '$lib/auth-client';
 	import { showToast } from '$lib/stores/toast';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -9,10 +10,16 @@
 	import FormError from '$lib/components/ui/FormError.svelte';
 	import * as m from '$lib/paraglide/messages';
 
+	let { data } = $props();
+
 	let email = $state('');
 	let password = $state('');
 	let error = $state('');
 	let loading = $state(false);
+
+	// URL de redirection apres login (depuis le layout parent)
+	const redirectTo = $derived(data.redirectTo || '/dashboard');
+	const isProjectRedirect = $derived(data.redirectTo === '/project/new');
 
 	async function handleSubmit(e: SubmitEvent) {
 		e.preventDefault();
@@ -30,7 +37,7 @@
 			} else {
 				await invalidateAll();
 				showToast('Welcome back!', 'success');
-				await goto('/dashboard');
+				await goto(redirectTo);
 			}
 		} catch (err) {
 			error = m.auth_loginErrorCredentials();
@@ -38,6 +45,11 @@
 			loading = false;
 		}
 	}
+
+	// Construire le lien register avec le meme redirect param
+	const registerLink = $derived(
+		data.redirectTo ? `/auth/register?redirect=${encodeURIComponent(data.redirectTo)}` : '/auth/register'
+	);
 </script>
 
 <svelte:head>
@@ -47,6 +59,10 @@
 <Card>
 	<form onsubmit={handleSubmit} class="auth-form">
 		<h1 class="form-title">{m.auth_loginTitle()}</h1>
+
+		{#if isProjectRedirect}
+			<p class="redirect-context">{m.auth_continueCreating()}</p>
+		{/if}
 
 		<FormError message={error} />
 
@@ -83,7 +99,7 @@
 
 		<p class="form-footer">
 			{m.auth_noAccount()}
-			<a href="/auth/register">{m.auth_createAccount()}</a>
+			<a href={registerLink}>{m.auth_createAccount()}</a>
 		</p>
 	</form>
 </Card>
@@ -126,5 +142,15 @@
 
 	.forgot-password a:hover {
 		color: var(--color-text);
+	}
+
+	.redirect-context {
+		text-align: center;
+		font-size: var(--text-sm);
+		color: var(--color-text-secondary);
+		padding: var(--space-2) var(--space-3);
+		background: var(--color-bg-elevated);
+		border-radius: var(--radius-sm);
+		margin: 0;
 	}
 </style>

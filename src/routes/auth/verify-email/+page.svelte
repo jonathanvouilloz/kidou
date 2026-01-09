@@ -7,6 +7,16 @@
 	import * as m from '$lib/paraglide/messages';
 
 	let email = $derived($page.url.searchParams.get('email') ?? '');
+	let redirectTo = $derived($page.url.searchParams.get('redirect'));
+
+	// Valider le redirect param
+	function isValidRedirect(url: string | null): url is string {
+		if (!url) return false;
+		return url.startsWith('/') && !url.includes('://');
+	}
+
+	// URL de callback apres verification (avec redirect si valide)
+	const callbackURL = $derived(isValidRedirect(redirectTo) ? redirectTo : '/dashboard');
 
 	let resendLoading = $state(false);
 	let resendSuccess = $state(false);
@@ -22,7 +32,7 @@
 		try {
 			const result = await sendVerificationEmail({
 				email,
-				callbackURL: '/dashboard'
+				callbackURL
 			});
 
 			if (result.error) {
@@ -72,7 +82,7 @@
 		</div>
 
 		<p class="form-footer">
-			<a href="/auth/login">{m.auth_backToLogin()}</a>
+			<a href={isValidRedirect(redirectTo) ? `/auth/login?redirect=${encodeURIComponent(redirectTo)}` : '/auth/login'}>{m.auth_backToLogin()}</a>
 		</p>
 	</div>
 </Card>

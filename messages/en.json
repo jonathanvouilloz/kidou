@@ -39,6 +39,7 @@
   "auth_loggingIn": "Logging in...",
   "auth_registerButton": "Create my account",
   "auth_registering": "Creating...",
+  "auth_registeringHint": "This may take a few seconds...",
   "auth_noAccount": "Don't have an account?",
   "auth_hasAccount": "Already have an account?",
   "auth_createAccount": "Create an account",
@@ -88,6 +89,7 @@
   "auth_resendVerificationError": "Failed to resend verification email. Please try again.",
   "auth_verificationResent": "Verification email sent!",
   "auth_emailNotVerified": "Please verify your email address to continue.",
+  "auth_continueCreating": "Sign in to continue creating your project",
 
   "dashboard_title": "My projects",
   "dashboard_projectCount": "{count}/{max} projects",
@@ -129,6 +131,7 @@
   "project_createError": "Error during creation",
   "project_addMilestoneMin": "Add at least one milestone",
   "project_connectionError": "Connection error. Please try again.",
+  "project_dataRestored": "Your project data has been restored",
 
   "projectView_backToDashboard": "Dashboard",
   "projectView_milestones": "Milestones",

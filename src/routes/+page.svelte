@@ -45,7 +45,7 @@
 			{#if data.user}
 				<Button onclick={() => goto('/dashboard')}>{m.landing_ctaDashboard()}</Button>
 			{:else}
-				<Button onclick={() => goto('/auth/register')}>{m.landing_ctaStart()}</Button>
+				<Button onclick={() => goto('/project/new')}>{m.landing_ctaStart()}</Button>
 				<p class="cta-secondary">
 					{m.landing_alreadyAccount()} <a href="/auth/login">{m.landing_login()}</a>
 				</p>

@@ -43,7 +43,7 @@
 			<div class="pricing-footer">
 				<Button
 					variant="secondary"
-					onclick={() => goto(isLoggedIn ? '/dashboard' : '/auth/register')}
+					onclick={() => goto(isLoggedIn ? '/dashboard' : '/project/new')}
 				>
 					{m.landing_pricing_freeButton()}
 				</Button>

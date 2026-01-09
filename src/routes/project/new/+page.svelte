@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 	import Input from '$lib/components/ui/Input.svelte';
 	import Textarea from '$lib/components/ui/Textarea.svelte';
 	import Button from '$lib/components/ui/Button.svelte';
@@ -7,6 +8,13 @@
 	import TagInput from '$lib/components/ui/TagInput.svelte';
 	import EditableMilestoneList from '$lib/components/project/EditableMilestoneList.svelte';
 	import TerminalBootOverlay from '$lib/components/terminal/TerminalBootOverlay.svelte';
+	import { showToast } from '$lib/stores/toast';
+	import {
+		savePendingProject,
+		loadPendingProject,
+		clearPendingProject,
+		type PendingProjectInput
+	} from '$lib/utils/pending-project';
 	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
@@ -40,6 +48,46 @@
 	let showBootOverlay = $state(false);
 	let createError = $state('');
 
+	// Sauvegarde les donnees et redirige vers l'auth
+	function redirectToAuth() {
+		const pendingData: PendingProjectInput = {
+			step,
+			projectName,
+			description,
+			stack,
+			deadline,
+			githubUrl,
+			liveUrl,
+			prdContent,
+			milestones
+		};
+		savePendingProject(pendingData);
+		goto('/auth/login?redirect=/project/new');
+	}
+
+	// Restaurer les donnees depuis localStorage au montage
+	onMount(() => {
+		const pending = loadPendingProject();
+		if (pending) {
+			// Restaurer tous les champs
+			projectName = pending.projectName;
+			description = pending.description;
+			stack = pending.stack;
+			deadline = pending.deadline;
+			githubUrl = pending.githubUrl;
+			liveUrl = pending.liveUrl;
+			prdContent = pending.prdContent;
+			milestones = pending.milestones;
+			step = pending.step;
+
+			// Si l'utilisateur est maintenant connecte, clear le storage et notifier
+			if (data.isAuthenticated) {
+				clearPendingProject();
+				showToast(m.project_dataRestored(), 'success');
+			}
+		}
+	});
+
 	async function handleAnalyze(e: SubmitEvent) {
 		e.preventDefault();
 		nameError = '';
@@ -59,6 +107,12 @@
 		// Validate PRD
 		if (prdContent.trim().length < 50) {
 			analyzeError = m.project_prdMinLength();
+			return;
+		}
+
+		// Verifier l'authentification - rediriger si necessaire
+		if (!data.isAuthenticated) {
+			redirectToAuth();
 			return;
 		}
 
@@ -106,6 +160,12 @@
 
 		if (validMilestones.length === 0) {
 			createError = m.project_addMilestoneMin();
+			return;
+		}
+
+		// Verifier l'authentification - rediriger si necessaire
+		if (!data.isAuthenticated) {
+			redirectToAuth();
 			return;
 		}
 

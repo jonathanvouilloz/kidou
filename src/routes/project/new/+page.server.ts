@@ -12,6 +12,21 @@ import {
 export const load: PageServerLoad = async ({ parent }) => {
 	const { user } = await parent();
 
+	// Si non authentifie, retourner des valeurs par defaut
+	// L'utilisateur peut remplir le formulaire mais devra se connecter pour analyser/creer
+	if (!user) {
+		return {
+			isAuthenticated: false,
+			canCreateProject: true, // Inconnu tant que pas connecte
+			projectCount: 0,
+			maxProjects: 3, // Afficher les limites du plan free
+			userPlan: 'free' as PlanType,
+			canAnalyze: true, // Necesstera l'auth de toute facon
+			llmUsed: 0,
+			llmMax: 1
+		};
+	}
+
 	const [userData] = await db.select({ plan: users.plan }).from(users).where(eq(users.id, user.id));
 
 	const userPlan = (userData?.plan ?? 'free') as PlanType;
@@ -30,6 +45,7 @@ export const load: PageServerLoad = async ({ parent }) => {
 	const canAnalyze = llmUsed < llmMax;
 
 	return {
+		isAuthenticated: true,
 		canCreateProject: projectCount < maxProjects,
 		projectCount,
 		maxProjects,

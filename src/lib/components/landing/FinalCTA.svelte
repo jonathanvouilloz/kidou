@@ -19,7 +19,7 @@
 		<h2 class="cta-title">{m.landing_finalCta_title()}</h2>
 		<p class="cta-subtitle">{m.landing_finalCta_subtitle()}</p>
 		<div class="cta-button">
-			<Button onclick={() => goto(isLoggedIn ? '/dashboard' : '/auth/register')}>
+			<Button onclick={() => goto(isLoggedIn ? '/dashboard' : '/project/new')}>
 				{m.landing_ctaStart()}
 			</Button>
 		</div>

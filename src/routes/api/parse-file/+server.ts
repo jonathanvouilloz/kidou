@@ -4,11 +4,9 @@ import type { RequestHandler } from './$types';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 
-export const POST: RequestHandler = async ({ request, locals }) => {
-	// Check authentication
-	if (!locals.user) {
-		throw error(401, { message: 'Non autorisé' });
-	}
+export const POST: RequestHandler = async ({ request }) => {
+	// Pas de check auth - l'upload de fichier est autorise sans compte
+	// Seule l'analyse PRD via AI (/api/parse-prd) necessite l'authentification
 
 	// Parse multipart form data
 	let formData: FormData;
