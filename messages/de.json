@@ -48,6 +48,11 @@
   "landing_lastProjects_empty": "Noch keine Projekte. Sei der Erste!",
 
   "auth_continueCreating": "Melde dich an, um dein Projekt weiterzuerstellen",
+  "auth_checkSpam": "Schau in deinem Spam-Ordner nach, falls du die E-Mail nicht findest.",
+  "auth_registerModal_title": "Nur ein kurzer Schritt",
+  "auth_registerModal_message": "Um dein PRD zu analysieren und dein Projekt auf Kidou zu erstellen, musst du ein Konto anlegen.",
+  "auth_registerModal_free": "Keine Kreditkarte erforderlich - es ist kostenlos!",
+  "auth_registerModal_button": "Verstanden",
   "project_dataRestored": "Deine Projektdaten wurden wiederhergestellt",
   "auth_registeringHint": "Dies kann einige Sekunden dauern..."
 }

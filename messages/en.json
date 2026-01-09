@@ -90,6 +90,11 @@
   "auth_verificationResent": "Verification email sent!",
   "auth_emailNotVerified": "Please verify your email address to continue.",
   "auth_continueCreating": "Sign in to continue creating your project",
+  "auth_checkSpam": "Check your spam folder if you don't see the email.",
+  "auth_registerModal_title": "One quick step",
+  "auth_registerModal_message": "To analyze your PRD and create your project on Kidou, you need to create an account.",
+  "auth_registerModal_free": "No credit card required - it's free!",
+  "auth_registerModal_button": "Got it",
 
   "dashboard_title": "My projects",
   "dashboard_projectCount": "{count}/{max} projects",

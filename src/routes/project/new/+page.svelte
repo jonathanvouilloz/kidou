@@ -62,7 +62,7 @@
 			milestones
 		};
 		savePendingProject(pendingData);
-		goto('/auth/login?redirect=/project/new');
+		goto('/auth/register?redirect=/project/new');
 	}
 
 	// Restaurer les donnees depuis localStorage au montage

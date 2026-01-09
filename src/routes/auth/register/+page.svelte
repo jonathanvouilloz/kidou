@@ -6,6 +6,7 @@
 	import Card from '$lib/components/ui/Card.svelte';
 	import Loader from '$lib/components/ui/Loader.svelte';
 	import FormError from '$lib/components/ui/FormError.svelte';
+	import Modal from '$lib/components/ui/Modal.svelte';
 	import * as m from '$lib/paraglide/messages';
 
 	let { data } = $props();
@@ -18,6 +19,9 @@
 
 	// Redirect param du layout parent
 	const isProjectRedirect = $derived(data.redirectTo === '/project/new');
+
+	// Modal d'info pour les users venant de /project/new
+	let showInfoModal = $state(data.redirectTo === '/project/new');
 
 	// Validation username (slug URL-safe)
 	function validateUsername(value: string): string | null {
@@ -154,6 +158,16 @@
 	</form>
 </Card>
 
+{#if showInfoModal}
+	<Modal title={m.auth_registerModal_title()} onclose={() => showInfoModal = false}>
+		<div class="modal-content">
+			<p>{m.auth_registerModal_message()}</p>
+			<p class="highlight">{m.auth_registerModal_free()}</p>
+			<Button onclick={() => showInfoModal = false}>{m.auth_registerModal_button()}</Button>
+		</div>
+	</Modal>
+{/if}
+
 <style>
 	.auth-form {
 		display: flex;
@@ -205,5 +219,22 @@
 		font-size: var(--text-xs);
 		color: var(--color-text-muted);
 		margin: 0;
+	}
+	.modal-content {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		text-align: center;
+	}
+
+	.modal-content p {
+		color: var(--color-text-secondary);
+		font-size: var(--text-sm);
+		margin: 0;
+	}
+
+	.modal-content .highlight {
+		color: var(--color-text);
+		font-weight: 500;
 	}
 </style>

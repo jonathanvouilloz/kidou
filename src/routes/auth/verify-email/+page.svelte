@@ -57,6 +57,7 @@
 		<div class="email-icon">@</div>
 		<h1 class="form-title">{m.auth_verifyEmailTitle()}</h1>
 		<p class="verify-text">{m.auth_verifyEmailSent()}</p>
+		<p class="spam-hint">{m.auth_checkSpam()}</p>
 
 		{#if email}
 			<p class="email-address">{email}</p>
@@ -119,6 +120,12 @@
 		color: var(--color-text-secondary);
 		font-size: var(--text-sm);
 		max-width: 300px;
+	}
+
+	.spam-hint {
+		font-size: var(--text-xs);
+		color: var(--color-text-muted);
+		margin: 0;
 	}
 
 	.email-address {
