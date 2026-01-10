@@ -40,9 +40,9 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 		throw error(400, { message: 'Le nom du projet ne peut pas dépasser 100 caractères' });
 	}
 
-	// Validate PRD
-	if (!originalPrd || typeof originalPrd !== 'string') {
-		throw error(400, { message: 'Le contenu du PRD est requis' });
+	// Validate PRD (optional - can be empty for manual milestone entry)
+	if (originalPrd !== undefined && typeof originalPrd !== 'string') {
+		throw error(400, { message: 'Le contenu du PRD doit être une chaîne de caractères' });
 	}
 
 	// Validate milestones
@@ -114,7 +114,7 @@ export const POST: RequestHandler = async ({ request, locals }) => {
 				name: name.trim(),
 				slug,
 				description: description?.trim() || null,
-				originalPrd,
+				originalPrd: originalPrd?.trim() || null,
 				stack: stack?.filter((s) => s.trim()) || null,
 				deadline: deadline ? new Date(deadline) : null,
 				githubUrl: githubUrl?.trim() || null,

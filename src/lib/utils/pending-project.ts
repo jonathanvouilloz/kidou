@@ -9,6 +9,8 @@ export interface PendingMilestone {
 	position: number;
 }
 
+export type MilestoneMode = 'choice' | 'prd' | 'manual';
+
 export interface PendingProjectData {
 	version: 1;
 	savedAt: string;
@@ -21,6 +23,7 @@ export interface PendingProjectData {
 	liveUrl: string;
 	prdContent: string;
 	milestones: PendingMilestone[];
+	milestoneMode?: MilestoneMode;
 }
 
 export type PendingProjectInput = Omit<PendingProjectData, 'version' | 'savedAt'>;

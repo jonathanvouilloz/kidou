@@ -13,7 +13,8 @@
 		savePendingProject,
 		loadPendingProject,
 		clearPendingProject,
-		type PendingProjectInput
+		type PendingProjectInput,
+		type MilestoneMode
 	} from '$lib/utils/pending-project';
 	import * as m from '$lib/paraglide/messages';
 
@@ -27,6 +28,7 @@
 
 	// Step management
 	let step = $state<1 | 2>(1);
+	let milestoneMode = $state<MilestoneMode>('choice');
 
 	// Step 1 state
 	let projectName = $state('');
@@ -59,7 +61,8 @@
 			githubUrl,
 			liveUrl,
 			prdContent,
-			milestones
+			milestones,
+			milestoneMode
 		};
 		savePendingProject(pendingData);
 		goto('/auth/register?redirect=/project/new');
@@ -79,6 +82,7 @@
 			prdContent = pending.prdContent;
 			milestones = pending.milestones;
 			step = pending.step;
+			milestoneMode = pending.milestoneMode ?? 'choice';
 
 			// Si l'utilisateur est maintenant connecte, clear le storage et notifier
 			if (data.isAuthenticated) {
@@ -88,12 +92,11 @@
 		}
 	});
 
-	async function handleAnalyze(e: SubmitEvent) {
+	// Step 1: Go to step 2 (choice mode)
+	function handleStep1Submit(e: SubmitEvent) {
 		e.preventDefault();
 		nameError = '';
-		analyzeError = '';
 
-		// Validate name
 		if (!projectName.trim()) {
 			nameError = m.project_nameRequired();
 			return;
@@ -103,6 +106,16 @@
 			nameError = m.project_nameMinLength();
 			return;
 		}
+
+		// Move to step 2 in choice mode
+		milestoneMode = 'choice';
+		step = 2;
+	}
+
+	// Step 2 PRD mode: Analyze PRD
+	async function handleAnalyze(e: SubmitEvent) {
+		e.preventDefault();
+		analyzeError = '';
 
 		// Validate PRD
 		if (prdContent.trim().length < 50) {
@@ -125,26 +138,25 @@
 				body: JSON.stringify({ prdContent })
 			});
 
-			const data = await res.json();
+			const result = await res.json();
 
 			if (!res.ok) {
-				analyzeError = data.message || m.project_analyzeError();
+				analyzeError = result.message || m.project_analyzeError();
 				return;
 			}
 
-			if (!data.milestones || data.milestones.length === 0) {
+			if (!result.milestones || result.milestones.length === 0) {
 				analyzeError = m.project_noMilestones();
 				return;
 			}
 
 			// Convert to editable format
-			milestones = data.milestones.map((title: string, i: number) => ({
+			milestones = result.milestones.map((title: string, i: number) => ({
 				id: crypto.randomUUID(),
 				title,
 				position: i + 1
 			}));
-
-			step = 2;
+			// Stay in PRD mode, milestones are now populated
 		} catch {
 			analyzeError = m.project_connectionError();
 		} finally {
@@ -210,7 +222,20 @@
 	}
 
 	function goBack() {
-		step = 1;
+		if (step === 2) {
+			if (milestoneMode === 'choice') {
+				// Going back from step 2 choice to step 1
+				step = 1;
+			} else {
+				// Going back from prd/manual to choice
+				milestoneMode = 'choice';
+				milestones = [];
+				prdContent = '';
+				analyzeError = '';
+			}
+		} else {
+			step = 1;
+		}
 	}
 
 	async function handleFileUpload(e: Event) {
@@ -250,25 +275,6 @@
 	function triggerFileInput() {
 		fileInputRef?.click();
 	}
-
-	function handleSkipToManual() {
-		nameError = '';
-
-		// Validate name
-		if (!projectName.trim()) {
-			nameError = m.project_nameRequired();
-			return;
-		}
-
-		if (projectName.trim().length < 3) {
-			nameError = m.project_nameMinLength();
-			return;
-		}
-
-		// Go to step 2 with empty milestones
-		milestones = [];
-		step = 2;
-	}
 </script>
 
 <svelte:head>
@@ -300,7 +306,7 @@
 				<p class="subtitle">{m.project_newSubtitle()}</p>
 			</header>
 
-			<form class="project-form" onsubmit={handleAnalyze}>
+			<form class="project-form" onsubmit={handleStep1Submit}>
 				<Input
 					label={m.project_nameLabel()}
 					bind:value={projectName}
@@ -347,7 +353,60 @@
 					/>
 				</div>
 
-				{#if data.canAnalyze}
+				<div class="actions">
+					<Button type="submit" variant="primary">
+						{m.project_nextButton()}
+					</Button>
+				</div>
+			</form>
+		{:else if milestoneMode === 'choice'}
+			<!-- Step 2: Choice Mode -->
+			<header class="page-header">
+				<Button variant="ghost" size="sm" onclick={goBack}>← {m.common_back()}</Button>
+				<h1>{projectName}</h1>
+				<p class="subtitle">{m.project_chooseMethod()}</p>
+			</header>
+
+			<div class="method-cards">
+				<button
+					class="method-card"
+					onclick={() => { milestoneMode = 'prd'; }}
+					disabled={!data.canAnalyze}
+				>
+					<div class="method-icon">AI</div>
+					<h3>{m.project_methodPrd()}</h3>
+					<p>{m.project_methodPrdDesc()}</p>
+					{#if !data.canAnalyze}
+						<span class="limit-badge">{data.llmUsed}/{data.llmMax} used</span>
+					{/if}
+				</button>
+
+				<button
+					class="method-card"
+					onclick={() => { milestoneMode = 'manual'; milestones = []; }}
+				>
+					<div class="method-icon">+</div>
+					<h3>{m.project_methodManual()}</h3>
+					<p>{m.project_methodManualDesc()}</p>
+				</button>
+			</div>
+		{:else if milestoneMode === 'prd'}
+			<!-- Step 2: PRD Mode -->
+			<header class="page-header">
+				<Button variant="ghost" size="sm" onclick={goBack}>← {m.common_back()}</Button>
+				<h1>{projectName}</h1>
+				<p class="subtitle">
+					{#if milestones.length > 0}
+						{m.project_milestonesDetected({ count: milestones.length })}
+					{:else}
+						{m.project_prdLabel()}
+					{/if}
+				</p>
+			</header>
+
+			{#if milestones.length === 0}
+				<!-- PRD Input Section -->
+				<form class="project-form" onsubmit={handleAnalyze}>
 					<div class="prd-section">
 						<div class="prd-header">
 							<label class="prd-label" for="prd-content">{m.project_prdLabel()}</label>
@@ -388,34 +447,39 @@
 						</Button>
 						<p class="usage-counter">{data.llmUsed}/{data.llmMax} analysis used today</p>
 					</div>
-				{:else}
-					<div class="analysis-limit-box">
-						<div class="limit-header">
-							<span class="limit-badge">⚠️ Daily limit reached</span>
-							<span class="limit-count">{data.llmUsed}/{data.llmMax} used</span>
-						</div>
-						<p class="limit-text">
-							You've used your daily AI analysis. Add milestones manually or upgrade to Pro for more analyses.
-						</p>
-						<div class="limit-buttons">
-							<Button type="button" variant="primary" onclick={handleSkipToManual}>
-								Add milestones manually
-							</Button>
-							<span class="coming-soon">Pro coming soon</span>
-						</div>
+				</form>
+			{:else}
+				<!-- Show EditableMilestoneList after analysis -->
+				<section class="milestones-section">
+					<p class="instructions">{m.project_editMilestonesHint()}</p>
+
+					<EditableMilestoneList bind:milestones />
+
+					{#if createError}
+						<p class="error-message">{createError}</p>
+					{/if}
+
+					<div class="actions">
+						<Button variant="primary" onclick={handleCreate} disabled={creating || milestones.length === 0}>
+							{#if creating}
+								<Loader size="sm" />
+								{m.project_creating()}
+							{:else}
+								{m.project_createButton()}
+							{/if}
+						</Button>
 					</div>
-				{/if}
-			</form>
+				</section>
+			{/if}
 		{:else}
+			<!-- Step 2: Manual Mode -->
 			<header class="page-header">
 				<Button variant="ghost" size="sm" onclick={goBack}>← {m.common_back()}</Button>
 				<h1>{projectName}</h1>
-				<p class="subtitle">{m.project_milestonesDetected({ count: milestones.length })}</p>
+				<p class="subtitle">{m.project_addMilestonesManually()}</p>
 			</header>
 
 			<section class="milestones-section">
-				<p class="instructions">{m.project_editMilestonesHint()}</p>
-
 				<EditableMilestoneList bind:milestones />
 
 				{#if createError}
@@ -613,46 +677,75 @@
 		margin: 0;
 	}
 
-	/* Analysis limit box */
-	.analysis-limit-box {
-		padding: var(--space-4);
-		background: var(--color-bg-elevated);
-		border: 1px solid var(--color-border);
-		border-radius: var(--radius-md);
-	}
-
-	.limit-header {
-		display: flex;
-		align-items: center;
-		justify-content: space-between;
-		margin-bottom: var(--space-2);
-	}
-
+	/* Limit badge (used in method cards) */
 	.limit-badge {
 		font-size: var(--text-sm);
 		font-weight: 500;
 		color: var(--color-warning, #f59e0b);
 	}
 
-	.limit-count {
-		font-size: var(--text-xs);
-		color: var(--color-text-muted);
-	}
-
-	.limit-text {
-		font-size: var(--text-sm);
-		color: var(--color-text-secondary);
-		margin: 0 0 var(--space-4);
-	}
-
-	.limit-buttons {
-		display: flex;
-		gap: var(--space-3);
-	}
-
 	.coming-soon {
 		font-size: var(--text-sm);
 		color: var(--color-text-muted);
 		padding: var(--space-2) var(--space-3);
+	}
+
+	/* Method choice cards */
+	.method-cards {
+		display: grid;
+		grid-template-columns: repeat(2, 1fr);
+		gap: var(--space-4);
+		margin-top: var(--space-4);
+	}
+
+	.method-card {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		text-align: center;
+		padding: var(--space-6);
+		background: var(--color-bg-elevated);
+		border: 1px solid var(--color-border);
+		border-radius: var(--radius-md);
+		cursor: pointer;
+		transition: all var(--transition-fast);
+	}
+
+	.method-card:hover:not(:disabled) {
+		border-color: var(--color-text-secondary);
+	}
+
+	.method-card:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+
+	.method-icon {
+		font-size: var(--text-2xl);
+		font-weight: 600;
+		margin-bottom: var(--space-3);
+		color: var(--color-text-secondary);
+	}
+
+	.method-card h3 {
+		font-size: var(--text-lg);
+		font-weight: 500;
+		margin: 0 0 var(--space-2);
+	}
+
+	.method-card p {
+		font-size: var(--text-sm);
+		color: var(--color-text-muted);
+		margin: 0;
+	}
+
+	.method-card .limit-badge {
+		margin-top: var(--space-3);
+	}
+
+	@media (max-width: 480px) {
+		.method-cards {
+			grid-template-columns: 1fr;
+		}
 	}
 </style>

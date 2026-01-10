@@ -13,13 +13,14 @@
 	let inputValue = $state('');
 
 	function addTag(e: KeyboardEvent) {
-		if (e.key === 'Enter') {
-			e.preventDefault();
+		if (e.key === 'Tab') {
 			const value = inputValue.trim();
 			if (value && !tags.includes(value) && tags.length < maxTags) {
+				e.preventDefault(); // Only prevent default if adding a tag
 				tags = [...tags, value];
 				inputValue = '';
 			}
+			// If no value to add, let Tab proceed normally for accessibility
 		}
 	}
 

@@ -137,6 +137,13 @@
   "project_addMilestoneMin": "Add at least one milestone",
   "project_connectionError": "Connection error. Please try again.",
   "project_dataRestored": "Your project data has been restored",
+  "project_nextButton": "Next",
+  "project_chooseMethod": "How would you like to add milestones?",
+  "project_methodPrd": "Upload PRD",
+  "project_methodPrdDesc": "Paste your document, AI extracts milestones automatically",
+  "project_methodManual": "Add manually",
+  "project_methodManualDesc": "Create your milestones from scratch",
+  "project_addMilestonesManually": "Add your milestones",
 
   "projectView_backToDashboard": "Dashboard",
   "projectView_milestones": "Milestones",
@@ -177,7 +184,7 @@
   "community_metaTitle": "Community - Kidou",
   "community_metaDescription": "Discover Kidou community projects",
 
-  "tagInput_placeholder": "Press Enter to add",
+  "tagInput_placeholder": "Press Tab to add",
 
   "styleguide_title": "Kidou - Styleguide",
   "styleguide_subtitle": "All design system components",
