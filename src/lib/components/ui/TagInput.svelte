@@ -27,6 +27,25 @@
 	function removeTag(index: number) {
 		tags = tags.filter((_, i) => i !== index);
 	}
+
+	function parseAndAddTags() {
+		// Parse commas and multiple spaces
+		const values = inputValue
+			.split(/[,\s]+/)
+			.map((v) => v.trim())
+			.filter((v) => v && !tags.includes(v));
+
+		if (values.length > 0) {
+			const newTags = [...tags];
+			for (const v of values) {
+				if (newTags.length < maxTags && !newTags.includes(v)) {
+					newTags.push(v);
+				}
+			}
+			tags = newTags;
+			inputValue = '';
+		}
+	}
 </script>
 
 <div class="tag-input-wrapper">
@@ -46,10 +65,12 @@
 				class="tag-input"
 				bind:value={inputValue}
 				onkeydown={addTag}
+				onblur={parseAndAddTags}
 				{placeholder}
 			/>
 		{/if}
 	</div>
+	<p class="tag-help">{m.tagInput_help()}</p>
 </div>
 
 <style>
@@ -127,5 +148,11 @@
 
 	.tag-input::placeholder {
 		color: var(--color-text-muted);
+	}
+
+	.tag-help {
+		font-size: var(--text-xs);
+		color: var(--color-text-muted);
+		margin: var(--space-1) 0 0;
 	}
 </style>

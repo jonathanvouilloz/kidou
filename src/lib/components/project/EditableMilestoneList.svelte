@@ -48,6 +48,18 @@
 		};
 		milestones = [...milestones, newMilestone];
 	}
+
+	function handleKeydown(e: KeyboardEvent, index: number) {
+		if (e.key === 'Enter') {
+			e.preventDefault();
+			addMilestone();
+			// Focus the new input after DOM update
+			setTimeout(() => {
+				const inputs = document.querySelectorAll('.milestone-input');
+				(inputs[index + 1] as HTMLInputElement)?.focus();
+			}, 0);
+		}
+	}
 </script>
 
 <div class="milestone-list">
@@ -64,6 +76,7 @@
 					value={milestone.title}
 					placeholder={m.milestones_placeholder()}
 					oninput={(e) => updateTitle(milestone.id, e.currentTarget.value)}
+					onkeydown={(e) => handleKeydown(e, index)}
 				/>
 
 				<div class="actions">

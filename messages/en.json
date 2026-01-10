@@ -185,6 +185,7 @@
   "community_metaDescription": "Discover Kidou community projects",
 
   "tagInput_placeholder": "Press Tab to add",
+  "tagInput_help": "Press Tab to add a tag, or separate with commas",
 
   "styleguide_title": "Kidou - Styleguide",
   "styleguide_subtitle": "All design system components",

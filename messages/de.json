@@ -63,5 +63,6 @@
   "project_methodManual": "Manuell hinzufügen",
   "project_methodManualDesc": "Erstelle deine Meilensteine von Grund auf",
   "project_addMilestonesManually": "Füge deine Meilensteine hinzu",
-  "tagInput_placeholder": "Tab drücken zum Hinzufügen"
+  "tagInput_placeholder": "Tab drücken zum Hinzufügen",
+  "tagInput_help": "Tab drücken zum Hinzufügen, oder mit Kommas trennen"
 }
