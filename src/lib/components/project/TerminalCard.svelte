@@ -389,6 +389,10 @@
 
 	/* Mobile */
 	@media (max-width: 480px) {
+		.terminal-link {
+			max-width: 100%;
+		}
+
 		.terminal-window {
 			height: 320px;
 		}

@@ -426,6 +426,7 @@
 	@media (max-width: 640px) {
 		.terminals-grid {
 			grid-template-columns: 1fr;
+			gap: 16px;
 		}
 	}
 
@@ -469,6 +470,10 @@
 		.title-row {
 			flex-direction: column;
 			gap: var(--space-1);
+		}
+
+		.terminals-grid {
+			gap: 12px;
 		}
 
 		.empty-state {
