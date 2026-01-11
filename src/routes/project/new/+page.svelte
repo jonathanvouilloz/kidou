@@ -624,6 +624,10 @@
 		.new-project {
 			padding: var(--space-4) var(--space-3);
 		}
+
+		.form-row {
+			grid-template-columns: 1fr;
+		}
 	}
 
 	/* Limit reached block */

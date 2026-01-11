@@ -778,7 +778,7 @@
 		}
 
 		.log-row {
-			grid-template-columns: 30px 1fr 70px;
+			grid-template-columns: 25px 1fr 60px;
 			font-size: 12px;
 		}
 	}

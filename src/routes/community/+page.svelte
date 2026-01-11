@@ -177,6 +177,7 @@
 	@media (max-width: 640px) {
 		.terminals-grid {
 			grid-template-columns: 1fr;
+			gap: 16px;
 		}
 	}
 
@@ -235,6 +236,10 @@
 
 		.page-title {
 			font-size: 22px;
+		}
+
+		.terminals-grid {
+			gap: 12px;
 		}
 	}
 </style>
