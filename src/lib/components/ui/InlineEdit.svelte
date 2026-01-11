@@ -61,7 +61,7 @@
 			type={type}
 			{placeholder}
 			onkeydown={handleKeydown}
-			onblur={cancelEdit}
+			onblur={save}
 			disabled={saving}
 			class="edit-input"
 		/>
