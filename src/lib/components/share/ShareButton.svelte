@@ -32,21 +32,21 @@
 		display: flex;
 		align-items: center;
 		gap: var(--space-2);
-		padding: var(--space-2) var(--space-3);
-		background: var(--color-bg-elevated);
+		padding: 5px 15px;
+		background: transparent;
 		border: 1px solid var(--color-border);
-		border-radius: var(--radius-sm);
-		color: var(--color-text-secondary);
-		font-size: var(--text-sm);
+		color: var(--color-text-muted);
+		font-size: 12px;
+		font-weight: bold;
+		letter-spacing: 1px;
 		font-family: var(--font-mono);
 		cursor: pointer;
-		transition: all var(--transition-fast);
+		transition: all 0.2s;
 	}
 
 	.share-btn:hover {
-		background: var(--color-bg-hover);
-		color: var(--color-text);
-		border-color: var(--color-text-muted);
+		border-color: var(--color-success);
+		color: var(--color-success);
 	}
 
 	.share-btn svg {
