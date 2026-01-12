@@ -391,28 +391,40 @@
 	@media (max-width: 480px) {
 		.terminal-link {
 			max-width: 100%;
+			width: 100%;
 		}
 
 		.terminal-window {
-			height: 320px;
+			height: 300px;
+		}
+
+		.terminal-header,
+		.terminal-footer {
+			padding: 0 10px;
 		}
 
 		.project-label {
-			padding: 4px 12px;
-			margin-left: 8px;
+			padding: 4px 10px;
+			margin-left: 6px;
 		}
 
 		.label-text {
-			font-size: 12px;
+			font-size: 11px;
 		}
 
 		.terminal-body {
+			padding: 12px;
 			font-size: 12px;
 		}
 
 		.meta-info {
 			font-size: 10px;
 			gap: 8px;
+		}
+
+		.log-text {
+			word-break: break-word;
+			white-space: normal;
 		}
 	}
 </style>

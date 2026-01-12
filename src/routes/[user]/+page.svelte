@@ -207,6 +207,7 @@
 		width: 100%;
 		max-width: 1400px;
 		margin: 0 auto;
+		box-sizing: border-box;
 	}
 
 	/* Header Section */
@@ -299,6 +300,8 @@
 		background: #0f0f0f;
 		padding: 15px;
 		border-left: 3px solid var(--color-accent-dim, #008F11);
+		overflow-x: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 
 	.code-line {
@@ -460,11 +463,12 @@
 
 	@media (max-width: 480px) {
 		.profile-page {
-			padding: 15px;
+			padding: 12px;
 		}
 
 		.user-title {
-			font-size: 22px;
+			font-size: 20px;
+			word-break: break-word;
 		}
 
 		.title-row {
@@ -474,6 +478,7 @@
 
 		.terminals-grid {
 			gap: 12px;
+			width: 100%;
 		}
 
 		.empty-state {
@@ -481,7 +486,7 @@
 		}
 
 		.code-editor {
-			font-size: 12px;
+			font-size: 11px;
 			padding: 10px;
 		}
 	}

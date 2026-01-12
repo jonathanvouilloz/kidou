@@ -190,17 +190,33 @@
 	@media (max-width: 480px) {
 		.filter-bar {
 			flex-direction: column;
-			align-items: flex-start;
+			align-items: stretch;
 			gap: var(--space-3);
 		}
 
 		.filter-groups-left {
 			flex-direction: column;
 			gap: var(--space-3);
+			width: 100%;
+		}
+
+		.chips {
+			flex-wrap: wrap;
+			gap: var(--space-1);
+		}
+
+		.chip {
+			font-size: 12px;
+			padding: 4px 10px;
 		}
 
 		.filter-date {
 			margin-left: 0;
+			width: 100%;
+		}
+
+		.date-select {
+			width: 100%;
 		}
 	}
 </style>

@@ -135,6 +135,7 @@
 	}
 
 	.container {
+		width: 100%;
 		max-width: 1400px;
 		margin: 0 auto;
 	}
@@ -231,15 +232,16 @@
 
 	@media (max-width: 480px) {
 		.community-page {
-			padding: var(--space-4) var(--space-3);
+			padding: var(--space-4) var(--space-2);
 		}
 
 		.page-title {
-			font-size: 22px;
+			font-size: 20px;
 		}
 
 		.terminals-grid {
 			gap: 12px;
+			width: 100%;
 		}
 	}
 </style>
